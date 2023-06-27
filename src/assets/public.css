@@ -1,0 +1,20 @@
+.margin_layout{
+    width: 80%;
+    margin: 0 auto;
+}
+.text_exceed_hide_one{
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;           
+}
+.text_exceed_hide_two{
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;           
+}
