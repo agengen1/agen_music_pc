@@ -105,7 +105,20 @@ const routes = [
         },
         component: () => import("@/views/Layout/user/index.vue"),
       },
+      {
+        path: "404",
+        name: "404",
+        meta: {
+          title: "404",
+        },
+        component: () => import("@/components/404/index.vue"),
+      },
     ],
+  },
+  {
+    path: "/:pathMatch(.*)",
+    name: "NotFound",
+    redirect: "/layout/404",
   },
 ];
 

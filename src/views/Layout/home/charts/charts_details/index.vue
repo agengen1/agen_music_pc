@@ -1,5 +1,5 @@
 <template>
-  <LOADING title="加载中...." textColor="#409eff" v-if="data_loading" />
+  <Loading title="加载中...." textColor="#409eff" v-if="data_loading" />
   <div class="charts_details_one" v-else>
     <div class="SongSheet_info">
       <p>{{ SongSheet_details.name }}</p>
@@ -104,8 +104,8 @@ export default defineComponent({
      * 功能::点击跳转歌手详情页面
      */
     function clickSingerName_Skpi_doc(id) {
-      console.log(id);
       // DOTO:
+      router.push(`/layout/home/singerDetails/${id}`);
     }
     /**
      * clickMuiscName_Skpi_doc

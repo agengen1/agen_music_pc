@@ -64,6 +64,10 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
+.el-menu--horizontal > .el-menu-item.is-active {
+  background-color: #409eff;
+  color: #fff !important;
+}
 .Layout_Header {
   .el-menu {
     margin: 0 auto;

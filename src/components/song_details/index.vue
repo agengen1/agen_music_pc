@@ -1,11 +1,11 @@
 <template>
   <div class="songDetails">
     <goBack></goBack>
-    <LOADING
+    <Loading
       title="加载中...."
       textColor="#409eff"
       v-if="JSON.stringify(song_info) == '{}'"
-    ></LOADING>
+    ></Loading>
     <div class="content" v-else>
       <div class="content_left">
         <p>
@@ -49,7 +49,7 @@
             </span>
           </p>
           <p class="text_exceed_hide_one">
-            所属专辑：<span @click="clickSongSheet_one(song_info.al.id)">{{
+            所属专辑：<span @click="clickSkipAlbum_doc(song_info.al.id)">{{
               song_info.al.name
             }}</span>
 
@@ -102,11 +102,11 @@
         </div>
         <div class="hot_comments">
           <h2>热评 <van-icon name="fire" color="#ff006d" /></h2>
-          <LOADING
+          <Loading
             title="加载中...."
             textColor="#409eff"
             v-if="hot_comment_list.length <= 0"
-          ></LOADING>
+          ></Loading>
           <ul v-else>
             <li v-for="item in hot_comment_list" :key="item.commentId">
               <div>
@@ -153,11 +153,11 @@
           </h2>
           <div>
             <div class="comments_content">
-              <LOADING
+              <Loading
                 title="加载中...."
                 textColor="#409eff"
                 v-if="comment_list.length <= 0"
-              ></LOADING>
+              ></Loading>
               <ul v-else>
                 <li v-for="item in comment_list" :key="item.commentId">
                   <div>
@@ -281,7 +281,6 @@ import { stamp_time } from "@/assets/public";
 import { useStore } from "vuex";
 import downloadMusic from "@/utils/downloadMusic";
 import goBack from "@/components/tool_components/goBack.vue";
-import router from "@/router";
 export default defineComponent({
   name: "songDetails",
   components: {
@@ -312,7 +311,6 @@ export default defineComponent({
     let disabled_text = ref("left"); //上下一页按钮禁用 left表示上一页禁用 right表示下一页禁用
     let pageNO = ref(1); //分页页码
     let pageCount = ref(6); //每页多少条
-    let pageTime = ref({}); //每页最后一项的time
     let pageComment_All_list = ref({}); //请求到的评论数据 (页数对应数据)
     let CountTotal = ref(0); //评论总条数
     let comment_list = ref([]); //表示评论列表
@@ -363,16 +361,16 @@ export default defineComponent({
      * 功能::点击跳转歌手详情页面
      */
     function clickSingerName_Skpi_doc(id) {
-      console.log(id);
       // DOTO:
+      router.push(`/layout/home/singerDetails/${id}`);
     }
     /**
-     * clickSongSheet_one
-     * @param {String} SongSheetID 歌单ID
+     * clickSkipAlbum_doc
+     * @param {String} albumID 专辑ID
      * 功能：点击跳转，通过传递的参数跳转到歌单详情页
      */
-    function clickSongSheet_one(SongSheetID) {
-      console.log(SongSheetID);
+    function clickSkipAlbum_doc(albumID) {
+      console.log(albumID);
       // 跳转歌单详情页 TODO:
     }
     /**
@@ -575,7 +573,7 @@ export default defineComponent({
       loading_flag,
       stamp_time,
       clickSingerName_Skpi_doc,
-      clickSongSheet_one,
+      clickSkipAlbum_doc,
       clickOpenLyric,
       clickPlayButton_playMusic,
       clickDownloadButton,

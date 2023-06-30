@@ -80,7 +80,7 @@
               class="music_one"
               v-for="item in music_arr"
               :key="item.id"
-              @click="clickMusic_one(item)"
+              @click="clickSkipSongDetails(item.id)"
             >
               <div class="music_one_left">
                 <img v-lazy="item.picUrl + '?param=120y120'" :alt="item.name" />
@@ -119,7 +119,7 @@
                 <p
                   v-for="(itemMusic, index) in item.ranking_musics"
                   :key="itemMusic.id"
-                  @click="clickCharts_one(itemMusic)"
+                  @click="clickSkipSongDetails(itemMusic.id)"
                 >
                   <span>{{ index + 1 }}</span>
                   <span class="text_exceed_hide_one">{{ itemMusic.name }}</span>
@@ -153,7 +153,7 @@
               class="singer_one"
               v-for="item in singer_arr"
               :key="item.id"
-              @click="clickSinger_one(item)"
+              @click="clickSinger_one(item.id)"
             >
               <div class="singer_one_left">
                 <img
@@ -214,31 +214,22 @@ export default defineComponent({
       // 跳转歌单详情页 TODO:
     }
     /**
-     * clickMusic_one
-     * @param {Object} data_Music
-     * 功能：点击播放歌曲，添加播放列表
+     * clickSkipSongDetails
+     * @param {string | number} songId
+     * 功能：点击跳转音乐详情
      */
-    function clickMusic_one(data_Music) {
-      console.log(data_Music);
+    function clickSkipSongDetails(songId) {
       // TODO:
+      router.push(`/layout/home/songDetails/${songId}`);
     }
     /**
      * clickSinger_one
-     * @param {Object} data_Singer
+     * @param {string | number} SingerId
      * 功能：点击歌手卡片，跳转歌手详情页
      */
-    function clickSinger_one(data_Singer) {
-      console.log(data_Singer);
+    function clickSinger_one(SingerId) {
       // TODO:
-    }
-    /**
-     * clickCharts_one
-     * @param {Object} data_Charts
-     * 功能：点击音乐名称，跳转音乐详情页
-     */
-    function clickCharts_one(data_Charts) {
-      console.log(data_Charts);
-      // TODO:
+      router.push(`/layout/home/singerDetails/${SingerId}`);
     }
     /**
      * clickCharts_view_all
@@ -351,9 +342,8 @@ export default defineComponent({
       isLogin,
       clickSongSheet_one,
       clickLogin,
-      clickMusic_one,
+      clickSkipSongDetails,
       clickSinger_one,
-      clickCharts_one,
       clickCharts_view_all,
       computeMusicTimeDuration,
       computeSingerAs,

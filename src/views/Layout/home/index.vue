@@ -25,13 +25,13 @@ export default defineComponent({
     let router = useRouter();
     let route = useRoute();
     let selectRouter_home = computed(() => {
-      if (route.path.indexOf("/layout/home/recommend") === 0) {
+      if (route.path.indexOf("/layout/home/recommend/") === 0) {
         return "/layout/home/recommend";
-      } else if (route.path.indexOf("/layout/home/charts") === 0) {
+      } else if (route.path.indexOf("/layout/home/charts/") === 0) {
         return "/layout/home/charts";
-      } else if (route.path.indexOf("/layout/home/songSheet") === 0) {
+      } else if (route.path.indexOf("/layout/home/songSheet/") === 0) {
         return "/layout/home/songSheet";
-      } else if (route.path.indexOf("/layout/home/singer") === 0) {
+      } else if (route.path.indexOf("/layout/home/singer/") === 0) {
         return "/layout/home/singer";
       }
     });

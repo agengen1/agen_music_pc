@@ -4,6 +4,7 @@ import LOADING from "@/components/tool_components/loading.vue"; //导入全局�
 import router from "./router"; //导入路由配置
 import store from "./store"; //导入vuex仓库
 import ElementPlus from "element-plus"; //导入element-plus 组件库
+import zhCn from "element-plus/dist/locale/zh-cn.mjs"; //导入汉字包
 import Vant from "vant"; //导入vant 组件库
 import VueLazyload from "vue-lazyload"; //导入vue-lazyload 懒加载插件
 const loadimage = require("./assets/lazy_logo_loading.png"); //导入加载图片
@@ -15,7 +16,9 @@ import "@/assets/public.css"; //公共css
 import "@/assets/iconfont/iconfont.css"; //字体图标样式
 /* 创建vue实例，传入app根组件 -- 注册element-plus插件 -- 注册vant插件 -- 注册VueLazyload懒加载插件 -- 注册仓库插件 -- 注册路由配置插件 -- 挂载到html中的(#app)节点上 */
 createApp(App)
-  .use(ElementPlus)
+  .use(ElementPlus, {
+    locale: zhCn,
+  })
   .use(Vant)
   .use(VueLazyload, {
     preLoad: 1,
@@ -25,5 +28,5 @@ createApp(App)
   })
   .use(store)
   .use(router)
-  .component("LOADING", LOADING)
+  .component("Loading", LOADING)
   .mount("#app");
