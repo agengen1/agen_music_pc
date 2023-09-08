@@ -16,19 +16,36 @@
         <div class="left">
           <div class="music_img">
             <img
-              v-lazy="music_info.imgUrl + '?param=550y550'"
+              v-lazy="music_info.imgUrl + '?param=150y150'"
               :alt="music_info.name"
               :title="music_info.name"
             />
+            <div class="mack" @click="clickMuiscName_Skpi_doc(music_info.id)">
+              <p><i class="iconfont icon-quanping"></i></p>
+            </div>
           </div>
           <div class="music_progress">
             <div class="other_info">
               <span class="text_exceed_hide_one">{{ music_info.name }}</span>
               <p>
                 <span>{{ computeMusicTimeDuration(playMusic_time) }}</span> /
-                <span>{{ computeMusicTimeDuration(music_info.playTime) }}</span>
+                <span v-if="music_urlInfo.fee === 1">{{
+                  computeMusicTimeDuration(music_urlInfo.time)
+                }}</span>
+                <span v-else>{{
+                  computeMusicTimeDuration(music_info.playTime)
+                }}</span>
               </p>
             </div>
+            <!-- 上下边距 -->
+            <div class="marginTB">
+              <!-- 是否vip  试听30s -->
+              <div class="isAudition" v-if="music_urlInfo.fee === 1">
+                <i class="iconfont icon-zhuanshukefu"></i>
+                <p>VIP歌曲,试听30s</p>
+              </div>
+            </div>
+
             <div class="progress_bar">
               <!-- :src="`https://music.163.com/song/media/outer/url?id=${music_info.id}.mp3 `" -->
               <!-- :src="music_urlInfo.url" -->
@@ -39,6 +56,17 @@
                 autoplay
               ></audio>
               <van-slider
+                v-if="music_urlInfo.fee === 1"
+                v-model="playMusic_time"
+                bar-height="3px"
+                button-size="4px"
+                :min="0"
+                :max="music_urlInfo.time"
+                active-color="#fe036e"
+                :readonly="false"
+              />
+              <van-slider
+                v-else
                 v-model="playMusic_time"
                 bar-height="3px"
                 button-size="4px"
@@ -67,16 +95,25 @@
         </div>
         <div class="right">
           <p>
-            <van-icon name="like-o" />
-            <van-icon name="like" />
+            <van-icon
+              name="like"
+              color="red"
+              v-if="isLikeMusic"
+              @click="clickSetLikeMusic({ id: music_info.id, type: false })"
+            />
+            <van-icon
+              name="like-o"
+              v-else
+              @click="clickSetLikeMusic({ id: music_info.id, type: true })"
+            />
           </p>
-          <p>
+          <p title="下载歌曲">
             <el-icon><Download /></el-icon>
           </p>
           <p>
             <van-icon name="comment-o" />
           </p>
-          <p>
+          <p title="播放记录">
             <van-icon name="bars" :badge="playMusic_list.length" />
           </p>
           <div class="volume">
@@ -109,10 +146,14 @@ import {
   watch,
 } from "vue";
 import { Unlock, Lock, Download } from "@element-plus/icons-vue";
-import { getMusic_isUsable_api, getMusic_url_api } from "@/api/publicApi";
+import { getMusic_url_api } from "@/api/publicApi";
 import { computeMusicTimeDuration } from "@/assets/public";
 import { useStore } from "vuex";
-import { ElNotification } from "element-plus";
+import { useRouter, useRoute } from "vue-router";
+import { ElNotification, ElMessage } from "element-plus";
+import { PackageMessageBox } from "@/assets/public";
+import { setUserLikeStatusapi } from "@/api/userDetailsApi";
+
 export default defineComponent({
   name: "playControl",
   components: {
@@ -125,6 +166,23 @@ export default defineComponent({
     let playControl_el = null; //鼠标移入移出操作元素
     let audio_el = null; //播放器操作元素
     let store = useStore(); //vuex 中的公共数据
+    let router = useRouter();
+    let route = useRoute();
+    let isLikeMusic = computed(() => {
+      if (store.state.user.user_isLogin) {
+        if (
+          store.state.user.userLikeMusicListId.indexOf(music_info.value.id) !=
+          -1
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        //未登录直接返回 false
+        return false;
+      }
+    });
     let playMusic_index = computed(() => {
       return store.state.player.playMusic_index;
     });
@@ -161,18 +219,31 @@ export default defineComponent({
       audio_el = document.querySelector("audio");
     });
     watch(playMusic_index, () => {
+      store.commit("player/SETPLAYMUSIC_STATUS", false);
       pause_handler();
       store.commit("player/SETPLAYMUSIC_TIME", 0);
       music_info.value = playMusic_list.value[playMusic_index.value];
-      operation_set(music_info.value.id);
-      setTimeout(() => {
-        audio_el.load(); //用来重新加载audio音频路径
-        store.commit("player/SETPLAYMUSIC_STATUS", true);
-      }, 500);
+      getMusic_url(music_info.value.id);
+      audio_el.load(); //用来重新加载audio音频路径
+      store.commit("player/SETPLAYMUSIC_STATUS", true);
     });
     watch(playMusic_volume, (newVal) => {
       audio_el.volume = newVal / 100;
     });
+    watch(
+      //监听当前是否在{mv/视频}播放页面（在：判断是否在播放音乐（播放就关闭音乐））
+      () => route.name,
+      (newVal) => {
+        if (newVal && newVal == "mvDetails") {
+          if (playMusic_status.value) {
+            pause_handler();
+          }
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
     /**
      * playControl_MouseIn
      * 功能：鼠标移入触发事件
@@ -208,17 +279,19 @@ export default defineComponent({
      * 播放处理函数
      */
     function play_handler() {
+      store.commit("player/SETPLAYMUSIC_STATUS", true);
       nextTick(() => {
         audio_el.play();
-        store.commit("player/SETPLAYMUSIC_STATUS", true);
       });
     }
     /**
      * 暂停处理函数
      */
     function pause_handler() {
-      audio_el.pause();
       store.commit("player/SETPLAYMUSIC_STATUS", false);
+      nextTick(() => {
+        audio_el.pause();
+      });
     }
     /**
      * 音乐播放中触发事件
@@ -230,11 +303,12 @@ export default defineComponent({
      * 音乐播放完成触发事件
      */
     function playMusic_complete_handler() {
-      console.log("播放完成");
       info_prompt("提示", "歌曲播放完毕!,自动播放下一首！");
-      setTimeout(() => {
+      store.commit("player/SETPLAYMUSIC_TIME", 0);
+      store.commit("player/SETPLAYMUSIC_STATUS", false);
+      nextTick(() => {
         play_nextSong_music();
-      }, 400);
+      });
     }
     /**
      * 功能：播放上一首音乐
@@ -258,23 +332,54 @@ export default defineComponent({
       }
       store.commit("player/SETPLAYMUSIC_INDEX", index);
     }
-
     /**
-     * 获取歌曲是否可用
-     * @param {string} id 歌曲id
+     * @param {number} id
+     * 功能::点击跳转音乐详情页面
      */
-    async function getMusic_isUsable(id) {
-      const { data: res } = await getMusic_isUsable_api(id);
-      return res;
+    function clickMuiscName_Skpi_doc(id) {
+      if (route.name === "songDetails") {
+        if (route.params.songId != id) {
+          router.replace("/layout/home/songDetails/" + id);
+        } else {
+          console.log("不用跳转");
+        }
+      } else {
+        router.push("/layout/home/songDetails/" + id);
+      }
     }
     /**
-     * 获取歌曲详情
-     * @param {string} id 歌曲id
+     * 点击取消/喜欢 歌曲
+     * @param {Object}  objData (对象中包括type:取消(false)，还是喜欢(true)，id:歌曲id)
      */
-    async function getMusic_url(id) {
-      const { data: res } = await getMusic_url_api(id);
-      if (res.code === 200) {
-        music_urlInfo.value = markRaw(res.data[0]);
+    function clickSetLikeMusic(objData) {
+      if (!store.state.user.user_isLogin) {
+        ElMessage.closeAll();
+        ElMessage({
+          message: "请先进行登录！",
+          type: "warning",
+        });
+        return store.commit("user/SETLOGINOPENSTATE", true);
+      }
+      if (objData.type) {
+        //喜欢音乐
+        PackageMessageBox(`确定喜欢这首音乐? `, "喜欢提示", {
+          type: "success",
+          draggable: true,
+        })
+          .then(() => {
+            setUserLikeStatus(objData.id, objData.type);
+          })
+          .catch(() => {});
+      } else {
+        //取消喜欢音乐
+        PackageMessageBox(`确定取消喜欢这首音乐? `, "取消喜欢提示", {
+          type: "warning",
+          draggable: true,
+        })
+          .then(() => {
+            setUserLikeStatus(objData.id, objData.type);
+          })
+          .catch(() => {});
       }
     }
     /**
@@ -284,26 +389,68 @@ export default defineComponent({
      */
     function info_prompt(title, message) {
       ElNotification({
+        type: "warning",
         title,
         message,
+        duration: 2000,
         position: "top-right",
+        dangerouslyUseHTMLString: true,
       });
     }
     /**
-     * 操作集合
-     * 功能:用于简化调用
-     * @param {number} id 歌曲id
+     * 获取歌曲url详情
+     * @param {string} id 歌曲id
      */
-    async function operation_set(id) {
-      let status = await getMusic_isUsable(id);
-      if (status.success) {
-        getMusic_url(id);
-      } else {
-        info_prompt("提示", status.message + "自动播放下一首！");
-        play_nextSong_music();
+    async function getMusic_url(id) {
+      const { data: res } = await getMusic_url_api(id);
+      if (res && res.code === 200) {
+        music_urlInfo.value = markRaw(res.data[0]);
+        if (res.data[0].fee === 1) {
+          info_prompt("提示", "<i style='color:red;'>VIP歌曲,试听30s</i>");
+        }
       }
     }
-    operation_set(music_info.value.id);
+    /**
+     * 喜欢音乐/取消喜欢音乐
+     * @param { String | Number} id 歌曲id
+     * @param { boolean } like  布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+     */
+    async function setUserLikeStatus(id, like) {
+      const { data: res } = await setUserLikeStatusapi(id, like);
+      if (res && res.code === 200) {
+        let LikeList = store.state.user.userLikeMusicListId;
+        if (like) {
+          ElMessage({
+            message: "喜欢成功！",
+            type: "success",
+          });
+          LikeList = [...LikeList, id];
+        } else {
+          ElMessage({
+            message: "取消喜欢成功！",
+            type: "success",
+          });
+          LikeList = LikeList.filter((el) => {
+            return el !== id;
+          });
+        }
+        store.commit("user/SETUSERLIKEMUSICLISTID", LikeList);
+      } else {
+        if (like) {
+          ElMessage({
+            message: "喜欢失败！",
+            type: "error",
+          });
+        } else {
+          ElMessage({
+            message: "取消喜欢失败！",
+            type: "error",
+          });
+        }
+      }
+    }
+    getMusic_url(music_info.value.id);
+
     return {
       islocked,
       music_info,
@@ -320,6 +467,9 @@ export default defineComponent({
       playMusic_complete_handler,
       play_preSong_music,
       play_nextSong_music,
+      clickMuiscName_Skpi_doc,
+      isLikeMusic,
+      clickSetLikeMusic,
     };
   },
 });
@@ -372,17 +522,49 @@ export default defineComponent({
         height: 100%;
         display: flex;
         .music_img {
+          position: relative;
           width: 20%;
           height: 100%;
           display: flex;
           align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          &:hover .mack {
+            opacity: 1;
+          }
           img {
             height: 90%;
             object-fit: cover;
           }
+          .mack {
+            position: absolute;
+            opacity: 0;
+            height: 90%;
+            width: 81px;
+            background-color: #00000077;
+            transition: all 0.3s;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            &:hover > p {
+              transform: scale(1.5);
+            }
+            > p {
+              width: 100%;
+              text-align: center;
+              transition: all 0.3s;
+
+              transform: scale(2.5);
+              i {
+                font-size: 50px;
+                font-weight: 300;
+                color: #ffffffc8;
+              }
+            }
+          }
         }
         .music_progress {
-          width: 80%;
+          margin-left: 10px;
           height: 100%;
           display: flex;
           flex-direction: column;
@@ -401,8 +583,23 @@ export default defineComponent({
               font: 500 14px "";
             }
           }
+          .marginTB {
+            margin: 10px 0;
+            .isAudition {
+              display: flex;
+              align-items: center;
+              i {
+                font-size: 15px;
+                color: red;
+                font-weight: 700;
+              }
+              p {
+                margin-left: 10px;
+                color: red;
+              }
+            }
+          }
           .progress_bar {
-            margin-top: 20px;
             /deep/ .van-slider__button {
               background-color: #fe036e;
               border: 4px solid #fff;
@@ -432,6 +629,9 @@ export default defineComponent({
         width: 40%;
         display: flex;
         align-items: center;
+        i {
+          cursor: pointer;
+        }
         p {
           flex: 1;
           font-size: 22px;

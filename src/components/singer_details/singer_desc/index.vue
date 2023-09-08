@@ -45,7 +45,7 @@ export default defineComponent({
      */
     async function getSingerDesc(id) {
       const { data: res } = await getSingerDescapi(id);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         let obj = {
           briefDesc: res.briefDesc,
           introduction: res.introduction,

@@ -1,5 +1,7 @@
 <template>
   <div class="songDetails">
+    <!-- 背景 -->
+    <div class="backpic"></div>
     <goBack></goBack>
     <Loading
       title="加载中...."
@@ -21,9 +23,10 @@
           type="primary"
           color="#ff006d"
           size="large"
+          :icon="Download"
           round
           @click="clickDownloadButton(song_info.id)"
-          ><el-icon><Download /></el-icon>下载这首歌</el-button
+          >下载这首歌</el-button
         >
       </div>
       <div class="content_right">
@@ -31,6 +34,7 @@
           <p class="text_exceed_hide_one">
             <span>
               {{ song_info.name }}
+              <i v-if="song_info.fee === 1" class="vipDis">VIP单曲</i>
             </span>
             <span v-if="song_info.tns && song_info.tns.length > 0">
               (
@@ -64,26 +68,25 @@
         <div class="middle_buttons">
           <el-button
             type="primary"
-            plain
             round
             @click="clickPlayButton_playMusic(song_info)"
             ><el-icon :size="20"><VideoPlay /></el-icon>&nbsp;
             立即播放</el-button
           >
+          <el-button type="success" round
+            ><el-icon :size="20"><FolderAdd /></el-icon>&nbsp; 收藏</el-button
+          >
           <el-button type="info" plain round
             ><el-icon :size="20"><Share /></el-icon>&nbsp; 分享</el-button
           >
-          <el-button type="info" plain round
-            ><el-icon :size="20"><ChatDotRound /></el-icon>&nbsp;
-            评论</el-button
-          >
+
           <el-button type="info" plain round @click="clickOpenLyric"
             ><el-icon :size="20"><ZoomIn /></el-icon>&nbsp;
             查看完整歌词</el-button
           >
         </div>
         <div class="lyric_content" ref="lyric_content">
-          <ul class="ulLyric" ref="ulLyric">
+          <ul class="ulLyric" ref="ulLyric" v-if="song_lyric.lyric_arr">
             <li
               v-for="(item, index) in song_lyric.lyric_arr"
               :key="item.Millisecond_time"
@@ -99,6 +102,7 @@
               {{ item.words }}
             </li>
           </ul>
+          <p v-else class="Nolyric">此歌曲暂无歌词！</p>
         </div>
         <div class="hot_comments">
           <h2>热评 <van-icon name="fire" color="#ff006d" /></h2>
@@ -240,11 +244,12 @@
       <template v-slot:header>
         <p>{{ song_info.name }} <span>(完整歌词)</span></p>
       </template>
-      <ul>
+      <ul v-if="song_lyric.lyric_arr">
         <li v-for="item in song_lyric.lyric_arr" :key="item.Millisecond_time">
           {{ item.words }}
         </li>
       </ul>
+      <p v-else class="Nolyric">此歌曲暂无歌词！</p>
     </el-drawer>
   </div>
 </template>
@@ -272,7 +277,7 @@ import {
   VideoPlay,
   Share,
   ZoomIn,
-  ChatDotRound,
+  FolderAdd,
   Clock,
   ArrowLeftBold,
   ArrowRightBold,
@@ -280,20 +285,18 @@ import {
 import { stamp_time } from "@/assets/public";
 import { useStore } from "vuex";
 import downloadMusic from "@/utils/downloadMusic";
-import goBack from "@/components/tool_components/goBack.vue";
+import { ElMessage } from "element-plus";
 export default defineComponent({
   name: "songDetails",
   components: {
     Back,
-    Download,
     VideoPlay,
     Share,
     ZoomIn,
-    ChatDotRound,
+    FolderAdd,
     Clock,
     ArrowLeftBold,
     ArrowRightBold,
-    goBack,
   },
   setup() {
     let route = useRoute();
@@ -315,6 +318,8 @@ export default defineComponent({
     let CountTotal = ref(0); //评论总条数
     let comment_list = ref([]); //表示评论列表
     let loading_flag = ref(false); //按钮加载状态
+    let rgbaColor1 = ref(""); //随机16进制颜色1
+    let rgbaColor2 = ref(""); //随机16进制颜色2
     let all_pages = computed(() => {
       if (CountTotal.value > 0 && pageCount.value > 0) {
         return Math.ceil(CountTotal.value / pageCount.value);
@@ -354,15 +359,38 @@ export default defineComponent({
         }
       }
     });
-
+    watch(
+      () => route.params.songId,
+      (newVal) => {
+        if (newVal) {
+          pageNO.value = 1;
+          getSongDetails(newVal);
+          getSongDetailsLyric(newVal);
+          getSongDetailsComment(newVal, pageCount.value, pageNO.value);
+          getSongDetailsHotComment(newVal, 0);
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
     /**
      * clickSingerName_Skpi_doc
      * @param {number} id
      * 功能::点击跳转歌手详情页面
      */
     function clickSingerName_Skpi_doc(id) {
+      ElMessage.closeAll();
       // DOTO:
-      router.push(`/layout/home/singerDetails/${id}`);
+      if (id > 0) {
+        //接口返回数据存在 id为零，所以进行判断
+        router.push(`/layout/home/singerDetails/${id}`);
+      } else {
+        ElMessage({
+          message: "暂未歌手信息或注销！",
+          type: "warning",
+        });
+      }
     }
     /**
      * clickSkipAlbum_doc
@@ -452,13 +480,38 @@ export default defineComponent({
       router.push("/layout/home/userDetails/" + id);
     }
     /**
+     * 随机生成带有透明的16进制颜色
+     */
+    function createdRandomColor() {
+      // 生成随机的RGB颜色值
+      const r = Math.floor(Math.random() * 256);
+      const g = Math.floor(Math.random() * 256);
+      const b = Math.floor(Math.random() * 256);
+
+      // 生成随机的透明度值（0到1之间）
+      const alpha = 0.1;
+
+      // 将RGB颜色值转换为16进制表示形式
+      const rgbToHex = function (c) {
+        const hex = c.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      };
+
+      const color = "#" + rgbToHex(r) + rgbToHex(g) + rgbToHex(b);
+
+      // 将透明度与颜色值合并
+      const rgbaColorString = color + Math.round(alpha * 255).toString(16);
+
+      return rgbaColorString;
+    }
+    /**
      * 点击下载歌曲按钮
      * @param {String} id  歌曲id
      */
     async function clickDownloadButton(id) {
       //两种情况，登录和未登录获取 歌曲api不同   下面用未登录获取
       const { data: res } = await getSongDetailsNoVipDownloadUrl(id);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         const obj = {
           music_name: song_info.value.name,
           music_url: res.data[0].url,
@@ -473,7 +526,7 @@ export default defineComponent({
      */
     async function getSongDetails(ids) {
       const { data: res } = await getSongDetailsapi(ids);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         song_info.value = res.songs[0];
       }
     }
@@ -483,15 +536,22 @@ export default defineComponent({
      */
     async function getSongDetailsLyric(id) {
       const { data: res } = await getSongDetailsLyricapi(id);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         let obj = {};
         let all_arr = [];
         let strLyric = "";
+        if (res.lrc.lyric == "") {
+          return;
+        }
         let arr = res.lrc.lyric.slice(0, -1).split("\n");
         arr.forEach((e) => {
           //时间单位：毫秒
           obj = {};
-          obj.words = e.split("]")[1].trim();
+          if (e.split("]")[1]) {
+            obj.words = e.split("]")[1].trim();
+          } else {
+            obj.words = "";
+          }
           strLyric += obj.words + "\r\n";
           let time = e.split("]")[0].trim().split("[")[1];
           let m = parseInt(time.split(":")[0]);
@@ -519,7 +579,7 @@ export default defineComponent({
      */
     async function getSongDetailsHotComment(id, type) {
       const { data: res } = await getSongDetailsHotCommentapi(id, type);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         hot_comment_list.value = res.hotComments;
       }
     }
@@ -540,7 +600,7 @@ export default defineComponent({
       loading_flag.value = false;
 
       console.log(res);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         if (pageNO.value == 1) {
           CountTotal.value = res.total;
         }
@@ -552,12 +612,12 @@ export default defineComponent({
         }
       }
     }
-    getSongDetails(route.params.songId);
-    getSongDetailsLyric(route.params.songId);
-    getSongDetailsComment(route.params.songId, pageCount.value, pageNO.value);
-    getSongDetailsHotComment(route.params.songId, 0);
+    rgbaColor1.value = createdRandomColor();
+    rgbaColor2.value = createdRandomColor();
     return {
       roll_height,
+      rgbaColor1,
+      rgbaColor2,
       route,
       playMusic_ID,
       song_info,
@@ -580,6 +640,7 @@ export default defineComponent({
       clickPreButton_PreMusic,
       clickNextButton_NextMusic,
       clickUserNameSkip_doc,
+      Download,
     };
   },
 });
@@ -588,6 +649,25 @@ export default defineComponent({
 <style lang="less" scoped>
 .songDetails {
   width: 100%;
+  .Nolyric {
+    padding: 50px 0 0 220px;
+    font-size: 20px;
+    color: #ff006d;
+  }
+  .backpic {
+    position: absolute;
+    z-index: -20;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(
+      to bottom,
+      v-bind(rgbaColor1),
+      v-bind(rgbaColor2),
+      rgba(255, 255, 255, 0)
+    );
+  }
   .content {
     margin-top: 5px;
     width: 100%;
@@ -654,6 +734,13 @@ export default defineComponent({
           &:nth-child(4) {
             color: #848484;
             font-size: 16px;
+          }
+          .vipDis {
+            padding: 2px 5px;
+            border-radius: 10px;
+            background-color: red;
+            color: #fff;
+            font-size: 14px;
           }
         }
       }

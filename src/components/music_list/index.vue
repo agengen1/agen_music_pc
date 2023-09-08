@@ -1,33 +1,12 @@
 <template>
-  <Loading title="加载中...." textColor="#409eff" v-if="data_loading" />
-  <div class="charts_details_one" v-else>
-    <div class="SongSheet_info">
-      <p>{{ SongSheet_details.name }}</p>
-      <p>
-        {{ stamp_time(SongSheet_details.updateTime) }}
-      </p>
-    </div>
-    <div class="SongSheet_desc" v-if="SongSheet_details.description !== null">
-      {{ SongSheet_details.description }}
-    </div>
-    <div class="SongSheet_other">
-      <el-button type="primary" size="large" :icon="icon.VideoPlay"
-        >播放全部</el-button
-      >
-      <el-button type="info" size="large" plain :icon="icon.Share"
-        >分享({{ SongSheet_details.shareCount }})</el-button
-      >
-      <el-button type="info" size="large" plain :icon="icon.Comment"
-        >评论({{ SongSheet_details.commentCount }})</el-button
-      >
-    </div>
+  <div class="musicList">
     <div class="SongSheet_musiclist">
       <h4>
-        <span>歌曲列表({{ SongSheet_details.trackCount }})</span>
-        <span
+        <span>歌曲列表({{ music_total_P }})</span>
+        <span v-if="play_total_P > 0"
           >播放:
           <span>
-            {{ SongSheet_details.playCount }}
+            {{ playCountTransform(play_total_P) }}
           </span>
           次</span
         >
@@ -37,9 +16,9 @@
         <li>歌手</li>
         <li>时长</li>
       </ul>
-      <ul class="SongSheet_musiclist_content">
+      <ul class="SongSheet_musiclist_content" v-if="music_list_P.length > 0">
         <li
-          v-for="(item, index) in SongSheet_details.SongSheet_allMusic"
+          v-for="(item, index) in music_list_P"
           :key="item.id"
           :class="{ odd_backColor: index % 2 != 0 }"
         >
@@ -53,6 +32,13 @@
               />
             </span>
             <span
+              v-if="isSearchUse_P"
+              class="text_exceed_hide_two"
+              @click="clickMuiscName_Skpi_doc(item.id)"
+              v-html="SearchTextHighlight(key, item.name)"
+            ></span>
+            <span
+              v-else
               class="text_exceed_hide_two"
               @click="clickMuiscName_Skpi_doc(item.id)"
               >{{ item.name }}</span
@@ -69,6 +55,9 @@
               v-for="item_a in item.ar"
               :key="item_a.id"
               @click="clickSingerName_Skpi_doc(item_a.id)"
+              :class="{
+                Highlight: item_a.name == key,
+              }"
             >
               &nbsp; {{ item_a.name }}&nbsp;
             </span>
@@ -76,36 +65,97 @@
           <p>{{ computeMusicTimeDuration(item.dt) }}</p>
         </li>
       </ul>
+      <el-empty v-else description="歌单暂无音乐">
+        <el-button type="primary">前往音乐馆收藏音乐</el-button>
+      </el-empty>
     </div>
   </div>
 </template>
-      
+
 <script>
-import { defineComponent, markRaw, ref, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { defineComponent, ref, watch } from "vue";
 import {
-  getSongSheet_desc_api,
-  getSongSheet_Music_All_api,
-} from "@/api/publicApi";
-import { Share, Comment, VideoPlay } from "@element-plus/icons-vue";
-import { computeMusicTimeDuration, stamp_time } from "@/assets/public";
+  computeMusicTimeDuration,
+  playCountTransform,
+  SearchTextHighlight,
+} from "@/assets/public";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+
 export default defineComponent({
-  name: "chartsDetails",
-  setup() {
-    let route = useRoute();
+  name: "musicList",
+  props: {
+    music_list: {
+      //歌曲列表
+      required: true,
+      type: Array,
+    },
+    music_total: {
+      //歌曲总数
+      required: true,
+      type: Number,
+    },
+    play_total: {
+      //歌曲总播放量
+      type: Number,
+      default: 0,
+    },
+    isSearchUse: {
+      //是否为搜索结果使用
+      type: Boolean,
+      default: false,
+    },
+    keyWord: {
+      type: String,
+      default: "",
+    },
+  },
+  setup(props) {
     let router = useRouter();
-    let SongSheet_details = ref({});
-    let data_loading = ref(true);
     let store = useStore();
+    let music_list_P = ref([]);
+    let music_total_P = ref(0);
+    let play_total_P = ref(0);
+    let isSearchUse_P = ref(false);
+    let key = ref(""); //搜索内容
+
+    watch(
+      [
+        () => props.music_list,
+        () => props.music_total,
+        () => props.play_total,
+        () => props.isSearchUse,
+        () => props.keyWord,
+      ],
+      (newVal) => {
+        music_list_P.value = newVal[0];
+        music_total_P.value = newVal[1];
+        play_total_P.value = newVal[2];
+        isSearchUse_P.value = newVal[3];
+        key.value = newVal[4];
+      },
+      {
+        immediate: true,
+      }
+    );
     /**
      * clickSingerName_Skpi_doc
      * @param {number} id
      * 功能::点击跳转歌手详情页面
      */
     function clickSingerName_Skpi_doc(id) {
+      ElMessage.closeAll();
       // DOTO:
-      router.push(`/layout/home/singerDetails/${id}`);
+      if (id > 0) {
+        //接口返回数据存在 id为零，所以进行判断
+        router.push(`/layout/home/singerDetails/${id}`);
+      } else {
+        ElMessage({
+          message: "暂未歌手信息或注销！",
+          type: "warning",
+        });
+      }
     }
     /**
      * clickMuiscName_Skpi_doc
@@ -124,6 +174,13 @@ export default defineComponent({
      */
     function clickPlayIcon_playMusic(music_data) {
       // TODO:
+      ElMessage.closeAll();
+      if (music_data.fee === 0) {
+        return ElMessage({
+          message: "此歌曲暂无版权！",
+          type: "warning",
+        });
+      }
       let obj = {
         name: music_data.name,
         id: music_data.id,
@@ -138,75 +195,25 @@ export default defineComponent({
       };
       store.commit("player/ADDPLAYMUSIC_LIST", obj);
     }
-    /**
-     * getSongSheet_desc
-     * @param {number} id
-     * 获取歌单详情-歌单所有音乐
-     */
-    async function getSongSheet_desc(id) {
-      let { data: res } = await getSongSheet_desc_api(id);
-      if (res.code === 200) {
-        let { data: res_all } = await getSongSheet_Music_All_api(
-          res.playlist.id
-        );
-        if (res_all.code === 200) {
-          res.playlist["SongSheet_allMusic"] = res_all.songs;
-          SongSheet_details.value = markRaw(res.playlist);
-          data_loading.value = false;
-        }
-      }
-    }
-    watch(
-      () => route.params.id,
-      (newVal) => {
-        data_loading.value = true;
-        getSongSheet_desc(newVal);
-      },
-      {
-        immediate: true,
-      }
-    );
     return {
-      data_loading,
-      SongSheet_details,
-      stamp_time,
+      music_list_P,
+      music_total_P,
+      play_total_P,
       computeMusicTimeDuration,
       clickSingerName_Skpi_doc,
       clickMuiscName_Skpi_doc,
       clickPlayIcon_playMusic,
-      icon: {
-        Share,
-        Comment,
-        VideoPlay,
-      },
+      playCountTransform,
+      SearchTextHighlight,
+      isSearchUse_P,
+      key,
     };
   },
 });
 </script>
-      
-<style lang="less" scoped>
-.charts_details_one {
-  padding: 15px 0 0 15px;
-  .SongSheet_info {
-    display: flex;
-    align-items: center;
-    margin: 0 0 15px 0;
 
-    p {
-      color: #000;
-      &:nth-child(1) {
-        font-size: 24px;
-      }
-      &:nth-child(2) {
-        margin: 0 0 0 15px;
-        font-size: 14px;
-      }
-    }
-  }
-  .SongSheet_desc {
-    margin: 10px 0;
-    font: 500 14px "";
-  }
+<style lang='less' scoped>
+.musicList {
   .SongSheet_musiclist {
     margin: 10px 0 0;
     h4 {
@@ -284,6 +291,8 @@ export default defineComponent({
                   height: 100%;
                   width: 80px;
                   object-fit: cover;
+                  border: 0.5px solid #efefef;
+                  border-radius: 5px;
                 }
               }
               &:nth-child(3) {

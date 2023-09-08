@@ -29,7 +29,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .loading {
   width: 100%;
-  height: 40vh;
+  height: 60vh;
   display: flex;
   flex-direction: column;
   justify-content: center;

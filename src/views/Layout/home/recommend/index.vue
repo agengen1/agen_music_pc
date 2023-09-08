@@ -138,7 +138,16 @@
         <div class="userinfo">
           <div class="userinfo_show" v-if="isLogin">
             <!-- 登录过显示此区域 -->
-            登录过
+            <img
+              v-lazy="loginUserInfo.avatarUrl"
+              :title="loginUserInfo.nickname"
+            />
+            <div>
+              <p>{{ loginUserInfo.nickname }}</p>
+              <el-button type="primary" @click="clickSkipUser_info"
+                ><el-icon><User /></el-icon> 我的</el-button
+              >
+            </div>
           </div>
           <div class="userinfo_hide" v-else>
             <!-- 未登录过显示此区域 -->
@@ -167,7 +176,9 @@
                 <p v-if="item.alias.length > 0" class="text_exceed_hide_one">
                   {{ computeSingerAs(item.alias) }}
                 </p>
-                <p class="text_exceed_hide_one">粉丝：{{ item.fansCount }}</p>
+                <p class="text_exceed_hide_one">
+                  粉丝：{{ playCountTransform(item.fansCount) }}
+                </p>
               </div>
             </div>
           </div>
@@ -178,7 +189,7 @@
 </template>
   
 <script>
-import { defineComponent, markRaw, reactive, ref } from "vue";
+import { computed, defineComponent, markRaw, reactive, ref } from "vue";
 import {
   getSwipePicapi,
   getRecommendMusicapi,
@@ -186,11 +197,18 @@ import {
   getHotSingerapi,
   getRankingListapi,
 } from "@/api/recommendApi";
-import { getSongSheet_Music_All_api } from "@/api/publicApi";
+import { getSongSheet_Music_All_api } from "@/api/songSheetDeaitlsApi";
 import { computeMusicTimeDuration, computeSingerAs } from "@/assets/public";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { User } from "@element-plus/icons-vue";
+import { playCountTransform } from "@/assets/public";
+
 export default defineComponent({
   name: "recommend",
+  components: {
+    User,
+  },
   setup() {
     /**
      * 此处不用reactive的原因是，ajax获取到的数据无需响应式
@@ -200,9 +218,15 @@ export default defineComponent({
     let music_arr = ref([]);
     let songSheet_arr = ref([]);
     let singer_arr = ref([]);
-    let isLogin = ref(false);
+    let isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
+    let loginUserInfo = computed(() => {
+      return store.state.user.userinfo;
+    });
     let ranking_arr_three = reactive([]);
     let router = useRouter();
+    let store = useStore();
 
     /**
      * clickSongSheet_one
@@ -241,13 +265,20 @@ export default defineComponent({
       router.push(`/layout/home/charts/details/${data_Charts_view_all.id}`);
     }
     /**
+     * 功能：跳转我的页面
+     */
+    function clickSkipUser_info() {
+      // TODO:
+      router.replace("/layout/user");
+    }
+    /**
      * clickLogin
      * 没有参数
      * 功能：点击登录
      */
     function clickLogin() {
-      console.log("登录");
       // TODO:
+      store.commit("user/SETLOGINOPENSTATE", true);
     }
     /**
      * getSwipePic
@@ -256,7 +287,7 @@ export default defineComponent({
      */
     async function getSwipePic() {
       let { data: res } = await getSwipePicapi();
-      if (res.code == 200) {
+      if (res && res.code === 200) {
         banners_arr.value = markRaw(res.banners);
       }
     }
@@ -267,7 +298,7 @@ export default defineComponent({
      */
     async function getRecommendMusic() {
       let { data: res } = await getRecommendMusicapi();
-      if (res.code == 200) {
+      if (res && res.code === 200) {
         music_arr.value = markRaw(res.result);
       }
     }
@@ -278,7 +309,7 @@ export default defineComponent({
      */
     async function getRecommendSongSheet() {
       let { data: res } = await getRecommendSongSheetapi();
-      if (res.code == 200) {
+      if (res && res.code === 200) {
         let songSheet_1 = [];
         let songSheet_2 = [];
         let songSheet_3 = [];
@@ -301,7 +332,7 @@ export default defineComponent({
      */
     async function getHotSinger() {
       let { data: res } = await getHotSingerapi();
-      if (res.code == 200) {
+      if (res && res.code === 200) {
         singer_arr.value = markRaw(res.artists);
       }
     }
@@ -312,7 +343,8 @@ export default defineComponent({
      */
     async function getRankingList() {
       let { data: res } = await getRankingListapi();
-      if (res.code === 200) {
+      console.log(res);
+      if (res && res.code === 200) {
         res.list.forEach((item, index) => {
           if (index < 3) {
             ranking_arr_three.push(item);
@@ -340,13 +372,16 @@ export default defineComponent({
       singer_arr,
       ranking_arr_three,
       isLogin,
+      loginUserInfo,
       clickSongSheet_one,
       clickLogin,
       clickSkipSongDetails,
       clickSinger_one,
       clickCharts_view_all,
+      clickSkipUser_info,
       computeMusicTimeDuration,
       computeSingerAs,
+      playCountTransform,
     };
   },
 });
@@ -649,8 +684,26 @@ export default defineComponent({
       padding: 0 15px;
       background-color: #f6f6f6;
       .userinfo {
+        padding: 30px 0 20px;
+        .userinfo_show {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          img {
+            margin-right: 20px;
+            width: 30%;
+            object-fit: cover;
+            border-radius: 10%;
+          }
+          div {
+            p {
+              color: #000;
+              margin-bottom: 20px;
+              font: 700 20px "华文楷书";
+            }
+          }
+        }
         .userinfo_hide {
-          padding: 30px 0 20px;
           display: flex;
           flex-direction: column;
           align-items: center;

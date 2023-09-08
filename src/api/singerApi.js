@@ -17,7 +17,7 @@ export const getSingerDescapi = (id) => {
 };
 
 /**
- * 相似歌手获取
+ * 相似歌手获取 --- 需要登录，才可以获取到
  * @param {String | number} id 歌手id
  */
 export const getSingerSimilarapi = (id) => {

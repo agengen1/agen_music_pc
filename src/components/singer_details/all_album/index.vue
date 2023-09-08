@@ -60,8 +60,11 @@ export default defineComponent({
      * 点击分页触发
      */
     function handlerCurrentChange(No) {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // 平滑滚动效果
+      });
       flag.value = true;
-
       getSingerAlbum(props.singerId, pageSize.value, No);
     }
     /**
@@ -81,7 +84,7 @@ export default defineComponent({
     async function getSingerAlbum(id, limit, offset) {
       const { data: res } = await getSingerAlbumapi(id, limit, offset);
       flag.value = false;
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         console.log(res);
         albumList.value = res.hotAlbums;
       }

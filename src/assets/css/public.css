@@ -1,0 +1,56 @@
+.margin_layout{
+    width: 85%;
+    margin: 0 auto;
+}
+.text_exceed_hide_one{
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;           
+}
+.text_exceed_hide_two{
+    overflow: hidden;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;           
+}
+.isBackColorTransparent {
+    background-color: transparent !important;
+  }
+.Highlight{
+    color: #ff006d !important;
+}
+
+.follow_Highlight {
+    cursor: pointer;
+    color: #409EFF;
+    &:hover {
+      text-decoration: underline;
+    }
+}
+i.follow_Highlight{
+  font-size: 14px;
+  margin: 0 2px;
+}
+
+.A_link_button{
+  color: #409EFF;
+  display: inline-block;
+  padding: 2px 5px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 12px;
+  cursor: pointer;
+    color: #409EFF;
+    &:hover {
+      text-decoration: underline;
+    }
+}
+.A_link_button i{
+  font-size: 12px;
+  margin-right: 2px;
+}

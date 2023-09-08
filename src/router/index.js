@@ -1,4 +1,13 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { ElMessage } from "element-plus";
+import user from "@/store/user";
+
+let CheackRouteNameArr = [
+  "follow",
+  "songSheetDetail",
+  "singerDetails",
+  "userDetails",
+]; //需要验证的路由名称数组
 
 const routes = [
   {
@@ -50,8 +59,7 @@ const routes = [
                 meta: {
                   title: "排行榜榜单详情",
                 },
-                component: () =>
-                  import("@/views/Layout/home/charts/charts_details/index.vue"),
+                component: () => import("@/components/music_details/index.vue"),
               },
             ],
           },
@@ -64,8 +72,8 @@ const routes = [
             component: () => import("@/views/Layout/home/songSheet/index.vue"),
           },
           {
-            path: "singer",
-            name: "singer",
+            path: "singers",
+            name: "singers",
             meta: {
               title: "歌手",
             },
@@ -95,15 +103,68 @@ const routes = [
             },
             component: () => import("@/components/singer_details/index.vue"),
           },
+          {
+            path: "songSheetDetail/:id",
+            name: "songSheetDetail",
+            meta: {
+              title: "歌单详情",
+            },
+            component: () =>
+              import("@/views/Layout/home/songSheet/songSheetDetail/index.vue"),
+          },
+          {
+            path: "mvs",
+            name: "mv",
+            meta: {
+              title: "mv",
+            },
+            component: () => import("@/views/Layout/home/mv/index.vue"),
+          },
+          {
+            path: "mvDetails/:mvId",
+            name: "mvDetails",
+            meta: {
+              title: "mv详情",
+            },
+            component: () =>
+              import("@/views/Layout/home/mv/mvDetails/index.vue"),
+          },
+          {
+            path: "searchResult/:searchText",
+            name: "searchResult",
+            meta: {
+              title: "搜索结果",
+            },
+            component: () =>
+              import("@/components/search/searchResult/index.vue"),
+          },
         ],
       },
       {
         path: "user",
         name: "user",
         meta: {
-          title: "我的",
+          title: "我的音乐",
         },
         component: () => import("@/views/Layout/user/index.vue"),
+        children: [
+          {
+            path: "userMusicSongSheet/:id",
+            name: "musicSongSheet",
+            meta: {
+              title: "我的音乐详情",
+            },
+            component: () => import("@/components/music_details/index.vue"),
+          },
+        ],
+      },
+      {
+        path: "follow",
+        name: "follow",
+        meta: {
+          title: "关注",
+        },
+        component: () => import("@/views/Layout/follow/index.vue"),
       },
       {
         path: "404",
@@ -125,6 +186,37 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+//全局路由前置守卫
+router.beforeEach((to, from, next) => {
+  //判断是否登录
+  if (user.state.user_isLogin) {
+    document.title = "牛牛音乐-(" + to.meta.title + ")";
+    //跳转路由页面滚动到顶部
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // 平滑滚动效果
+    });
+    next();
+  } else {
+    if (CheackRouteNameArr.includes(to.name)) {
+      ElMessage.closeAll();
+      ElMessage({
+        type: "warning",
+        message: "请先进行登录！",
+      });
+      next(false);
+    } else {
+      document.title = "牛牛音乐-(" + to.meta.title + ")";
+      //跳转路由页面滚动到顶部
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // 平滑滚动效果
+      });
+      next();
+    }
+  }
 });
 
 export default router;

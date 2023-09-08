@@ -1,13 +1,16 @@
 <template>
   <goBack></goBack>
   <Loading
-    v-if="JSON.stringify(singerDetails) == '{}'"
+    v-if="singerDetails.artist == null && JSON.stringify(singerDetails) == '{}'"
     textColor="#409eff"
     title="加载中..."
   ></Loading>
   <div v-else>
     <div class="singerDetails_content">
-      <div class="left">1</div>
+      <div class="left">
+        <h3>相似歌手</h3>
+        <div class="left_con"></div>
+      </div>
       <div class="right">
         <div class="details">
           <div class="backimg">
@@ -22,19 +25,29 @@
             <p class="info_as">
               {{ computeSingerAs(singerDetails.artist.alias) }}
             </p>
-            <p class="info_identify">
+            <p class="info_identify" v-if="singerDetails.identify != null">
               <img v-lazy="singerDetails.identify.imageUrl" />
               <span>{{ singerDetails.identify.imageDesc }}</span>
             </p>
             <p class="info_identities">
-              <span v-if="singerDetails.artist.identities.length > 0">
+              <span
+                v-if="
+                  singerDetails.artist.identities &&
+                  singerDetails.artist.identities.length > 0
+                "
+              >
                 <span
                   v-for="item in singerDetails.artist.identities"
                   :key="item"
                   >{{ item }}</span
                 >
               </span>
-              <span v-if="singerDetails.artist.identifyTag.length > 0">
+              <span
+                v-if="
+                  singerDetails.artist.identifyTag &&
+                  singerDetails.artist.identifyTag.length > 0
+                "
+              >
                 <span
                   v-for="item in singerDetails.artist.identifyTag"
                   :key="item"
@@ -47,6 +60,7 @@
                 ><el-icon><FolderAdd /></el-icon>收藏</el-button
               >
               <el-button
+                v-if="singerDetails.user && singerDetails.user.userId"
                 type="success"
                 plain
                 @click="clickUserNameSkip_doc(singerDetails.user.userId)"
@@ -80,9 +94,9 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import goBack from "@/components/tool_components/goBack.vue";
-import { getSingerDetailsapi } from "@/api/singerApi";
+import { getSingerDetailsapi, getSingerSimilarapi } from "@/api/singerApi";
 import { useRoute, useRouter } from "vue-router";
 import { computeSingerAs } from "@/assets/public";
 import { FolderAdd, User } from "@element-plus/icons-vue";
@@ -103,6 +117,17 @@ export default defineComponent({
     let route = useRoute();
     let router = useRouter();
     let singerDetails = ref({}); //歌手详情
+    let similarSinger = ref({}); //
+    watch(
+      () => route.params.singerId,
+      (newVal) => {
+        singerDetails.value = {};
+        getSingerDetails(newVal);
+      },
+      {
+        immediate: true,
+      }
+    );
     /**
      * 点击跳转用户详情页面
      * @param {string | number} id 用户id
@@ -116,12 +141,22 @@ export default defineComponent({
      */
     async function getSingerDetails(id) {
       const { data: res } = await getSingerDetailsapi(id);
-      console.log(res);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         singerDetails.value = res.data;
       }
     }
-    getSingerDetails(route.params.singerId);
+    /**
+     * 相似歌手获取 -- 需要登录
+     * @param {String | number} id 歌手id
+     */
+    async function getSingerSimilar(id) {
+      const { data: res } = await getSingerSimilarapi(id);
+      console.log(res);
+      if (res && res.code === 200) {
+      }
+    }
+    getSingerSimilar(route.params.singerId);
+
     return {
       singerDetails,
       computeSingerAs,
@@ -142,7 +177,13 @@ export default defineComponent({
   }
   .left {
     width: 25%;
-    background-color: #4a0cbd;
+    border: 1px solid red;
+    h3 {
+      padding-left: 5px;
+      height: 35px;
+      line-height: 35px;
+      border-left: 4px solid #23d623;
+    }
   }
   .right {
     padding-left: 20px;

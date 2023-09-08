@@ -9,7 +9,11 @@
         :class="{ nav_active: route.path.split('/')[5] == item.id }"
       >
         <div class="info_img">
-          <img v-lazy="item.coverImgUrl" :alt="item.name" :title="item.name" />
+          <img
+            v-lazy="item.coverImgUrl + '?param=80y80'"
+            :alt="item.name"
+            :title="item.name"
+          />
         </div>
         <div class="info">
           <p class="text_exceed_hide_one">{{ item.name }}</p>
@@ -48,7 +52,7 @@ export default defineComponent({
      */
     async function getRankingList_All_desc() {
       let { data: res } = await getRankingListapi();
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         ranking_arr.value = markRaw(res.list);
       }
     }

@@ -13,22 +13,25 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 export default defineComponent({
   name: "404",
   setup() {
     let router = useRouter();
     let stime = ref(5); //自动跳转时间
+    let timer = ref(null); //定时器
     onMounted(() => {
-      let ds = null;
-      ds = setInterval(() => {
+      timer.value = setInterval(() => {
         stime.value--;
         if (stime.value <= 0) {
-          clearInterval(ds);
+          clearInterval(timer.value);
           clickSkipHome();
         }
       }, 1000);
+    });
+    onUnmounted(() => {
+      clearInterval(timer.value);
     });
     /**
      * 点击跳转音乐馆
@@ -46,7 +49,7 @@ export default defineComponent({
 
 <style lang='less' scoped>
 .Nofound {
-  height: 70vh;
+  height: calc(100vh - 25vh - 80px);
   display: flex;
   justify-content: center;
   flex-direction: column;

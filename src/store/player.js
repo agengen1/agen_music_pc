@@ -25,7 +25,8 @@ export default {
         },
       },
     ], //播放音乐列表 保存歌曲信息
-    playMusic_volume: 50, // 音乐播放音量大小 -- 默认值50
+    playMusic_volume:
+      parseInt(window.localStorage.getItem("playMusic_volume")) || 50, // 音乐播放音量大小 -- 默认值50
   },
   mutations: {
     SETPLAYMUSIC_INDEX(state, number_index) {
@@ -39,11 +40,11 @@ export default {
     },
     SETPLAYMUSIC_VOLUME(state, number_volume) {
       state.playMusic_volume = number_volume;
+      window.localStorage.setItem("playMusic_volume", number_volume);
     },
     ADDPLAYMUSIC_LIST(state, any_data_list) {
       if (typeof any_data_list == "object") {
         // 对象处理
-        console.log("object", any_data_list);
         let new_arr = state.playMusic_list.filter((e) => {
           return e.id !== any_data_list.id;
         });

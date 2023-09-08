@@ -115,7 +115,11 @@
         "
       >
         <div v-if="user_songSheetList_create.length > 0">
-          <h2>{{ user_info.profile.nickname }}创建的歌单</h2>
+          <h2>
+            {{ user_info.profile.nickname }}创建的歌单<span
+              >({{ user_songSheetList_create.length }}首)</span
+            >
+          </h2>
           <div>
             <div
               v-for="item in user_songSheetList_create"
@@ -132,7 +136,11 @@
           </div>
         </div>
         <div v-if="user_songSheetList_collect.length > 0">
-          <h2>{{ user_info.profile.nickname }}收藏的歌单</h2>
+          <h2>
+            {{ user_info.profile.nickname }}收藏的歌单<span
+              >({{ user_songSheetList_collect.length }}首)</span
+            >
+          </h2>
           <div>
             <div
               v-for="item in user_songSheetList_collect"
@@ -159,7 +167,6 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { Plus, Mic, Male, Female, Headset } from "@element-plus/icons-vue";
-import goBack from "@/components/tool_components/goBack.vue";
 import {
   getUserDetailsapi,
   getUserSongSheetDetailsapi,
@@ -170,7 +177,6 @@ import Loading from "../tool_components/loading.vue";
 export default defineComponent({
   name: "userDetails",
   components: {
-    goBack,
     Loading,
     Plus,
     Mic,
@@ -207,7 +213,7 @@ export default defineComponent({
     async function getUserDetails(id) {
       const { data: res } = await getUserDetailsapi(id);
       console.log(res);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         user_info.value = res;
       }
     }
@@ -219,7 +225,7 @@ export default defineComponent({
      */
     async function getUserSongSheetDetails(id, limit, offset) {
       const { data: res } = await getUserSongSheetDetailsapi(id, limit, offset);
-      if (res.code === 200) {
+      if (res && res.code === 200) {
         user_songSheetList_create.value = res.playlist.filter((item) => {
           return item.userId == route.params.userId;
         });
@@ -327,10 +333,6 @@ export default defineComponent({
           flex-direction: column;
           align-items: center;
           font: 500 14px "华文楷书";
-          cursor: pointer;
-          &:hover {
-            color: #409eff;
-          }
           span {
             &:nth-child(1) {
               font-size: 18px;
@@ -352,7 +354,12 @@ export default defineComponent({
     > div {
       margin: 5px 0;
       h2 {
+        color: #000;
         border-bottom: 3px solid #409eff;
+        span {
+          color: #409eff;
+          font-size: 14px;
+        }
       }
       > div {
         margin: 5px 0;

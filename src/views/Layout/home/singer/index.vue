@@ -12,5 +12,6 @@ export default defineComponent({
       
     <style lang="less" scoped>
 .singer {
+  width: 50%;
 }
 </style>

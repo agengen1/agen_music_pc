@@ -7,12 +7,12 @@ export const getSwipePicapi = () => {
 
 // 热门推荐音乐
 export const getRecommendMusicapi = () => {
-  return axios.get("/personalized/newsong?limit=12");
+  return axios.get(`/personalized/newsong?limit=12&timestamp=${Date.now()}`);
 };
 
 // 热门推荐歌单
 export const getRecommendSongSheetapi = () => {
-  return axios.get("/personalized?limit=30");
+  return axios.get(`/personalized?limit=30&timestamp=${Date.now()}`);
 };
 
 // 热门歌手获取

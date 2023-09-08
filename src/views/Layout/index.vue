@@ -5,59 +5,155 @@
       class="el-menu"
       mode="horizontal"
       router
+      :class="{
+        isBackColorTransparent: route.name === 'songDetails',
+      }"
     >
       <div class="logo">
         <img src="@/assets/logo_png.png" />
       </div>
       <el-menu-item index="/layout/home">音乐馆</el-menu-item>
-      <el-menu-item index="/layout/user">我的</el-menu-item>
-      <el-menu-item index="/user/interest">关注</el-menu-item>
+      <el-menu-item index="/layout/user">我的音乐</el-menu-item>
+      <el-menu-item v-if="user_isLogin" index="/layout/follow"
+        >关注</el-menu-item
+      >
       <div class="other_fun">
-        <p class="search">
-          <el-input
-            v-model="searchVal"
-            class="w-50 m-2"
-            size="large"
-            clearable
-            placeholder="音乐 / 歌手 / 歌单"
-            :prefix-icon="icon.Search"
-          />
+        <div class="sea_header">
+          <search :useDom="'all'"></search>
+        </div>
+        <p class="loginSuccess" v-if="user_isLogin">
+          <el-dropdown>
+            <div class="infoimg">
+              <img
+                v-lazy="user_userinfo.avatarUrl + '?param=100y100'"
+                :title="user_userinfo.nickname"
+              />
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item :icon="icon.Connection"
+                  >我的信息</el-dropdown-item
+                >
+                <el-dropdown-item :icon="icon.TrophyBase"
+                  >我的等级</el-dropdown-item
+                >
+                <el-dropdown-item
+                  divided
+                  :icon="icon.SwitchButton"
+                  @click="clickLogout(user_userinfo.nickname)"
+                  >退出登录</el-dropdown-item
+                >
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </p>
-        <p class="login_user">登录</p>
+        <p class="login_user" v-else @click="clickOpenLogin">登录</p>
       </div>
     </el-menu>
   </div>
   <router-view></router-view>
-  <div class="Layout_Footer"></div>
+  <div class="Layout_Footer" v-if="disappear_footer"></div>
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { Search } from "@element-plus/icons-vue";
+import { SwitchButton, TrophyBase, Connection } from "@element-plus/icons-vue";
+import { useStore } from "vuex";
+import { logOutapi } from "@/api/loginApi";
+import { PackageMessageBox } from "@/assets/public";
+import { ElMessage } from "element-plus";
+import search from "@/components/search/index.vue";
+
 export default defineComponent({
   name: "Layout",
+  components: {
+    search,
+  },
   setup() {
-    let searchVal = ref("");
     let router = useRouter();
     let route = useRoute();
+    let store = useStore();
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
+    let user_userinfo = computed(() => {
+      return store.state.user.userinfo;
+    });
     let slectRouter_layout = computed(() => {
       if (route.path.indexOf("/layout/home") === 0) {
         return "/layout/home";
       } else if (route.path.indexOf("/layout/user") === 0) {
         return "/layout/user";
-      } else if (route.path.indexOf("/user/interest") === 0) {
-        return "/user/interest";
+      } else if (route.path.indexOf("/layout/follow") === 0) {
+        return "/layout/follow";
       }
     });
+    let disappear_footer = computed(() => {
+      if (route.path.indexOf("/layout/user") === 0 && user_isLogin.value) {
+        return false;
+      } else {
+        return true;
+      }
+    });
+    /**
+     * 点击退出登录
+     */
+    function clickLogout(name) {
+      PackageMessageBox(`确定退出登录?  (${name})`, "退出提示", {
+        type: "warning",
+        draggable: true,
+      })
+        .then(() => {
+          // 确定退出
+          logOut();
+        })
+        .catch(() => {
+          //取消，什么都不用干
+        });
+    }
+    /**
+     * clickOpenLogin
+     * 点击立即登录，弹出登录页面
+     */
+    function clickOpenLogin() {
+      store.commit("user/SETLOGINOPENSTATE", true);
+    }
+    /**
+     * 退出登录
+     */
+    async function logOut() {
+      const { data: res } = await logOutapi();
+      if (res.code === 200) {
+        ElMessage({
+          message: "退出成功！",
+          type: "success",
+        });
+        store.commit("user/SETUSERISLOGIN", false);
+        store.commit("user/SETUSERINFO", {});
+        store.commit("user/SETUSERLIKEMUSICLISTID", []);
+        router.replace("/");
+      } else {
+        ElMessage({
+          message: "退出失败！",
+          type: "error",
+        });
+      }
+    }
     return {
       icon: {
-        Search,
+        SwitchButton,
+        TrophyBase,
+        Connection,
       },
-      searchVal,
       router,
       route,
       slectRouter_layout,
+      disappear_footer,
+      user_userinfo,
+      user_isLogin,
+      clickOpenLogin,
+      clickLogout,
     };
   },
 });
@@ -67,6 +163,11 @@ export default defineComponent({
 .el-menu--horizontal > .el-menu-item.is-active {
   background-color: #409eff;
   color: #fff !important;
+}
+/deep/ .infoimg {
+  &:focus-visible {
+    outline: none;
+  }
 }
 .Layout_Header {
   .el-menu {
@@ -96,17 +197,36 @@ export default defineComponent({
         justify-content: center;
         align-items: center;
       }
-      .search {
+      .sea_header {
         width: 75%;
         height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .login_user {
+        margin-left: 20px;
         flex: 1;
         font-size: 16px;
         font-weight: 700;
         cursor: pointer;
         &:hover {
           color: #409eff;
+        }
+      }
+      .loginSuccess {
+        flex: 1;
+        margin-left: 20px;
+        .infoimg {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          img {
+            width: 50%;
+            object-fit: cover;
+            border-radius: 50%;
+          }
         }
       }
     }

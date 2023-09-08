@@ -3,7 +3,6 @@ import axios from "@/utils/request";
 // 获取用户登录状态
 export const getLoginStatusapi = (time) => {
   return axios.get(`/login/status?timestamp=${time}`);
-  // return axios.get(`/login/status`);
 };
 
 // 退出登录

@@ -14,8 +14,12 @@ export function getUserDetailsapi(id) {
  * @param { String|Number } limit : 返回数量 , 默认为 30
  * @param { String|Number } offset : 偏移数量，用于分页 ,如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
  */
-export function getUserSongSheetDetailsapi(id, limit, offset) {
-  return axios.get(`/user/playlist?uid=${id}&limit=${limit}&offset=${offset}`);
+export function getUserSongSheetDetailsapi(id, limit, offset = 1) {
+  return axios.get(
+    `/user/playlist?uid=${id}&limit=${limit}&offset=${
+      (offset - 1) * limit
+    }&timestamp=${Date.now()}`
+  );
 }
 
 /**
@@ -24,8 +28,10 @@ export function getUserSongSheetDetailsapi(id, limit, offset) {
  * @param { String|Number } limit : 返回数量 , 默认为 30
  * @param { String|Number } offset : 偏移数量，用于分页 ,如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
  */
-export function getUserFollowsDetailsapi(id, limit, offset) {
-  return axios.get(`/user/follows?uid=${id}&limit=${limit}&offset=${offset}`);
+export function getUserFollowsDetailsapi(id, limit, offset = 1) {
+  return axios.get(
+    `/user/follows?uid=${id}&limit=${limit}&offset=${(offset - 1) * limit}`
+  );
 }
 
 /**
@@ -34,6 +40,43 @@ export function getUserFollowsDetailsapi(id, limit, offset) {
  * @param { String|Number } limit : 返回数量 , 默认为 30
  * @param { String|Number } offset : 偏移数量，用于分页 ,如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
  */
-export function getUserFollowedsDetailsapi(id, limit, offset) {
-  return axios.get(`/user/followeds?uid=${id}&limit=${limit}&offset=${offset}`);
+export function getUserFollowedsDetailsapi(id, limit, offset = 1) {
+  return axios.get(
+    `/user/followeds?uid=${id}&limit=${limit}&offset=${(offset - 1) * limit}`
+  );
+}
+
+/**
+ * 获取用户播放记录
+ * @param {String | number} id 用户id
+ * @param {String | number} type 播放记录类型  type=1时只返回weekData(本周播放记录), type=0时返回allData(全部播放记录)
+ */
+export function getUserPlayRecordsapi(id, type) {
+  return axios.get(`/user/record?uid=${id}&type=${type}`);
+}
+
+/**
+ * 获取用户喜欢音乐列表
+ * @param { String | Number} id 用户id
+ */
+export function getUserLikeMusicListapi(id) {
+  return axios.get(`/likelist?uid=${id}&timestamp=${Date.now()}`);
+}
+
+/**
+ * 喜欢音乐/取消喜欢音乐
+ * @param { String | Number} id 歌曲id
+ * @param { boolean } like  布尔值 , 默认为 true 即喜欢 , 若传 false, 则取消喜欢
+ */
+export function setUserLikeStatusapi(id, like) {
+  return axios.get(`/like?id=${id}&like=${like}&timestamp=${Date.now()}`);
+}
+
+/**
+ * 关注/取消关注  用户
+ * @param {string | number} id : 用户 id
+ * @param {string | number} t : 1为关注,2为取消关注
+ */
+export function setFollowerapi(id, t) {
+  return axios.get(`/follow?id=${id}&t=${t}`);
 }
