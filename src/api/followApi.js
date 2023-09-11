@@ -24,10 +24,10 @@ export function getMyFollowerData_api(pagesize, lasttime) {
   );
 }
 
-// /**
-//  * 使用网易云链接获取nickname对应的用户id
-//  * @param {string} nickname  用户nickname
-//  */
-// export function getNetEaseCloudNickName_api(nickname) {
-//   return axios.get(`/user/nickname?nickname=${nickname}`);
-// }
+/**
+ * 根据nickname获取userid
+ * @param {string} nickname  用户nickname
+ */
+export function getNetEaseCloudNickName_api(nickname) {
+  return axios.get(`/get/userids?nicknames=${nickname}`);
+}

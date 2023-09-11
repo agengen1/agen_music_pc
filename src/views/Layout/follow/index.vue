@@ -356,8 +356,10 @@ export default defineComponent({
         let arr = singerName.match(/@{1}/g);
         if (arr.length === 1) {
           singerName = singerName.trim().slice(1);
-          console.log("跳转", singerName);
-          // getNetEaseCloudNickName(singerName);
+          getNetEaseCloudNickName(singerName).then((res) => {
+            //跳转用户详情
+            router.push(`/layout/home/userDetails/${res}`);
+          });
         } else {
           ElMessage({
             type: "error",
@@ -407,14 +409,16 @@ export default defineComponent({
       }
     }
 
-    // /**
-    //  * 使用网易云链接获取nickname对应的用户id
-    //  * @param {string} nickname  用户nickname
-    //  */
-    // async function getNetEaseCloudNickName(nickname) {
-    //   const { data: res } = await getNetEaseCloudNickName_api(nickname);
-    //   console.log(res);
-    // }
+    /**
+     * 根据nickname获取userid
+     * @param {string} nickname  用户nickname
+     */
+    async function getNetEaseCloudNickName(nickname) {
+      const { data: res } = await getNetEaseCloudNickName_api(nickname);
+      if (res && res.code === 200) {
+        return res.nicknames[nickname];
+      }
+    }
     /**
      * 获取动态消息
      * @param {number} pagesize 每页数据,默认 20
