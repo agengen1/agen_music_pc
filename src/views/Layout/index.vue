@@ -49,6 +49,14 @@
         </p>
         <p class="login_user" v-else @click="clickOpenLogin">登录</p>
       </div>
+      <div class="github_icon">
+        <a href="https://github.com/agengen1/agen_music_pc" target="_blank">
+          <i
+            title="github -- agengen1/agen_music_pc"
+            class="iconfont icon-github"
+          ></i>
+        </a>
+      </div>
     </el-menu>
   </div>
   <router-view></router-view>
@@ -228,6 +236,18 @@ export default defineComponent({
             border-radius: 50%;
           }
         }
+      }
+    }
+    .github_icon {
+      width: 6%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      i {
+        cursor: pointer;
+        color: #333;
+        font-size: 36px;
       }
     }
   }

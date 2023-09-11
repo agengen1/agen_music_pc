@@ -86,3 +86,25 @@ export const manageSongSheet_api = (id, type) => {
   }
   return console.log("不通过");
 };
+
+/**
+ * 获取相似歌单
+ * @param {number | string} songSheetId  歌单id
+ */
+export const getSimiSongSheet_api = (songSheetId) => {
+  return axios.get(`/simi/playlist?id=${songSheetId}`);
+};
+
+/**
+ * 获取歌单收藏者
+ * @param {number | string} songSheetId  歌单id
+ * @param {number}  limit: 取出评论数量 , 默认为 20
+ * @param {number}  offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*20, 其中 20 为 limit 的值
+ */
+export const getSongSheetSubscribers_api = (songSheetId, limit, offset) => {
+  return axios.get(
+    `/playlist/subscribers?id=${songSheetId}&limit=${limit}&offset=${
+      (offset - 1) * limit
+    }`
+  );
+};

@@ -9,6 +9,7 @@ export default {
   mutations: {
     SETUSERISLOGIN(state, bool_flag) {
       state.user_isLogin = bool_flag;
+      localStorage.setItem("user_isLogin", bool_flag);
     },
     SETUSERINFO(state, obj_data) {
       // 判断设置用户信息是，（用户信息为{}表示在退出登录，直接将localStorage中的userId删除,剩下则相反）

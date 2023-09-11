@@ -78,5 +78,33 @@ export function setUserLikeStatusapi(id, like) {
  * @param {string | number} t : 1为关注,2为取消关注
  */
 export function setFollowerapi(id, t) {
-  return axios.get(`/follow?id=${id}&t=${t}`);
+  return axios.get(`/follow?id=${id}&t=${t}&timestamp=${Date.now()}`);
+}
+
+/**
+ * 验证接口-二维码生成（用于关注等接口验证）
+ * @param {number} vid: 触发验证后,接口返回的verifyId
+ * @param {number} type:触发验证后,接口返回的verifyType
+ * @param {string} token:触发验证后,接口返回的verifyToken
+ * @param {string} evid:触发验证后,接口返回的params的event_id
+ * @param {string} sign:触发验证后,接口返回的params的sign
+ */
+export function CreatedVerifyapi(vid, type, token, evid, sign) {
+  return axios.get(
+    `/verify/getQr?vid=${vid}&type=${type}&token=${token}&evid=${evid}&sign=${sign}&timestamp=${Date.now()}`
+  );
+}
+
+/**
+ * 验证接口-二维码检测
+ * @param {string}  qr: /verify/getQr接口返回的qr字符串
+ * @param 返回结果说明：
+ * qrCodeStatus:0,detailReason:0 二维码生成成功
+ * qrCodeStatus:0,detailReason:303 账号不一致
+ * qrCodeStatus:10,detailReason:0 二维码已扫描,并且手机号相同
+ * qrCodeStatus:20,detailReason:0 验证成功
+ * qrCodeStatus:21,detailReason:0 二维码已失效
+ */
+export function eventLoopVerifyapi(qr) {
+  return axios.get(`/verify/qrcodestatus?qr=${qr}&timestamp=${Date.now()}`);
 }

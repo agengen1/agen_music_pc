@@ -43,7 +43,7 @@ xaxios.interceptors.response.use(
         grouping: true,
         message: "操作失败！",
       });
-      return Promise.resolve(error);
+      return Promise.resolve(error.response.data);
     } else if (error.response.status === 404) {
       ElMessage({
         type: "error",

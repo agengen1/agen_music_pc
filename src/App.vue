@@ -8,21 +8,33 @@
   <el-dialog v-model="login_openState" destroy-on-close title="登录">
     <LOGIN></LOGIN>
   </el-dialog>
+  <!-- 验证页面 -->
+  <el-dialog
+    v-model="verifyOpenStatus"
+    width="30%"
+    destroy-on-close
+    title="验证"
+  >
+    <VERIFY></VERIFY>
+  </el-dialog>
 </template>
 
 <script>
 import { computed, defineComponent, watch, ref } from "vue";
 import PLAYCONTROL from "@/components/playControl/index.vue";
 import LOGIN from "@/components/login/index.vue";
+import VERIFY from "@/components/verify/index.vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { getLoginStatusapi } from "@/api/loginApi";
 import { getUserLikeMusicListapi } from "@/api/userDetailsApi";
+
 export default defineComponent({
   name: "App",
   components: {
     PLAYCONTROL,
     LOGIN,
+    VERIFY,
   },
   setup() {
     let store = useStore();
@@ -34,8 +46,17 @@ export default defineComponent({
       set(newVal) {
         store.commit("user/SETLOGINOPENSTATE", newVal);
       },
-    });
+    }); //登录页面打开状态
+    let verifyOpenStatus = computed({
+      get() {
+        return store.state.verify.verifyOpenStatus;
+      },
+      set(newVal) {
+        store.commit("verify/SETVERIFYOPENSTATUS", newVal);
+      },
+    }); //验证页面打开状态
     let userId = parseInt(localStorage.getItem("userId"));
+
     let player_control_flag = ref(true); //播放器的控制 true表示显示
     watch(
       //监听当前是否在{mv/视频}播放页面（在：隐藏播放控制栏）
@@ -84,6 +105,7 @@ export default defineComponent({
     return {
       login_openState,
       player_control_flag,
+      verifyOpenStatus,
     };
   },
 });

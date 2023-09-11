@@ -239,7 +239,10 @@
 
 <script>
 import { computed, defineComponent, reactive, ref } from "vue";
-import { getMyFollowerData_api } from "@/api/followApi";
+import {
+  getMyFollowerData_api,
+  getNetEaseCloudNickName_api,
+} from "@/api/followApi";
 import {
   ArrowLeftBold,
   ArrowRightBold,
@@ -354,6 +357,7 @@ export default defineComponent({
         if (arr.length === 1) {
           singerName = singerName.trim().slice(1);
           console.log("跳转", singerName);
+          // getNetEaseCloudNickName(singerName);
         } else {
           ElMessage({
             type: "error",
@@ -403,6 +407,14 @@ export default defineComponent({
       }
     }
 
+    // /**
+    //  * 使用网易云链接获取nickname对应的用户id
+    //  * @param {string} nickname  用户nickname
+    //  */
+    // async function getNetEaseCloudNickName(nickname) {
+    //   const { data: res } = await getNetEaseCloudNickName_api(nickname);
+    //   console.log(res);
+    // }
     /**
      * 获取动态消息
      * @param {number} pagesize 每页数据,默认 20

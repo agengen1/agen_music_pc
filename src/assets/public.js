@@ -128,6 +128,15 @@ export function FollowWordHighlight(repObj) {
  */
 export function FollowA_userNameHighlight(repObj) {
   let str = repObj.text;
+  let repArr_Ait = str.match(/(@[^\s]+\s{1})/g);
+  if (repArr_Ait && repArr_Ait.length > 0) {
+    for (let i = 0; i < repArr_Ait.length; i++) {
+      str = str.replace(
+        repArr_Ait[i],
+        `<i class="follow_Highlight">${repArr_Ait[i]}</i>`
+      );
+    }
+  }
   let repArr = str.match(/https?:\/\/[^\s]+/g);
   if (repArr && repArr.length > 0) {
     for (let i = 0; i < repArr.length; i++) {
@@ -145,15 +154,7 @@ export function FollowA_userNameHighlight(repObj) {
     text: str,
     actArr: repObj.actArr,
   });
-  let repArr_Ait = str.match(/(@[^\s]+\s{1})/g);
-  if (repArr_Ait && repArr_Ait.length > 0) {
-    for (let i = 0; i < repArr_Ait.length; i++) {
-      str = str.replace(
-        repArr_Ait[i],
-        `<i class="follow_Highlight">${repArr_Ait[i]}</i>`
-      );
-    }
-  }
+
   return str;
 }
 

@@ -23,3 +23,11 @@ export function getMyFollowerData_api(pagesize, lasttime) {
     `/event?pagesize=${pagesize}&lasttime=${lasttime}&timestamp=${Date.now()}`
   );
 }
+
+// /**
+//  * 使用网易云链接获取nickname对应的用户id
+//  * @param {string} nickname  用户nickname
+//  */
+// export function getNetEaseCloudNickName_api(nickname) {
+//   return axios.get(`/user/nickname?nickname=${nickname}`);
+// }

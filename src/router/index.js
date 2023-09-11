@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { ElMessage } from "element-plus";
-import user from "@/store/user";
+
+// 用户登录状态
+let user_isLogin;
 
 let CheackRouteNameArr = [
   "follow",
@@ -190,8 +192,9 @@ const router = createRouter({
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
+  user_isLogin = localStorage.getItem("user_isLogin") || "false";
   //判断是否登录
-  if (user.state.user_isLogin) {
+  if (user_isLogin === "true") {
     document.title = "牛牛音乐-(" + to.meta.title + ")";
     //跳转路由页面滚动到顶部
     window.scrollTo({
@@ -206,7 +209,11 @@ router.beforeEach((to, from, next) => {
         type: "warning",
         message: "请先进行登录！",
       });
-      next(false);
+      if (from.name) {
+        next(false);
+      } else {
+        next("/");
+      }
     } else {
       document.title = "牛牛音乐-(" + to.meta.title + ")";
       //跳转路由页面滚动到顶部

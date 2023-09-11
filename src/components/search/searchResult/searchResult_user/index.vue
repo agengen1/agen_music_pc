@@ -87,8 +87,9 @@ import { defineComponent, watch, ref } from "vue";
 import { getSearchResultapi } from "@/api/searchApi";
 import { SearchTextHighlight } from "@/assets/public";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { Plus, Check, Female, Male } from "@element-plus/icons-vue";
-import { setFollowerapi } from "@/api/userDetailsApi";
+import { setFollowerapi, CreatedVerifyapi } from "@/api/userDetailsApi";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -105,6 +106,7 @@ export default defineComponent({
   },
   setup(props) {
     let router = useRouter();
+    let store = useStore();
     let searchResultUser_flag = ref(true); //加载状态
     let total = ref(0); //共有多少条数据
     let pagCount = ref(30); //每一页数据 默认30条
@@ -194,13 +196,41 @@ export default defineComponent({
         });
       } else {
         ElMessage.closeAll();
-        ElMessage({
-          type: "error",
-          message: "关注失败!",
-        });
+        // ElMessage({
+        //   type: "error",
+        //   message: "关注失败!",
+        // });
+        CreatedVerify(
+          res.verifyId,
+          res.verifyType,
+          res.verifyToken,
+          res.params.event_id,
+          res.params.sign
+        );
       }
     }
-
+    /**
+     * 验证接口-二维码生成（用于关注等接口验证）
+     * @param {number} vid: 触发验证后,接口返回的verifyId
+     * @param {number} type:触发验证后,接口返回的verifyType
+     * @param {string} token:触发验证后,接口返回的verifyToken
+     * @param {string} evid:触发验证后,接口返回的params的event_id
+     * @param {string} sign:触发验证后,接口返回的params的sign
+     */
+    async function CreatedVerify(vid, type, token, evid, sign) {
+      const { data: res } = await CreatedVerifyapi(
+        vid,
+        type,
+        token,
+        evid,
+        sign
+      );
+      if (res && res.code === 200) {
+        store.commit("verify/SETVERIFYOPENSTATUS", true);
+        store.commit("verify/SETVERIFYURL", res.data.qrurl);
+        store.commit("verify/SETVERIFYCODE", res.data.qrCode);
+      }
+    }
     return {
       searchResultUser_flag,
       key,
