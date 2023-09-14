@@ -540,36 +540,47 @@ export default defineComponent({
         let obj = {};
         let all_arr = [];
         let strLyric = "";
-        if (res.lrc.lyric == "") {
+        if (res.lrc.lyric.trim().length <= 0) {
           return;
+        } else {
+          let arr = res.lrc.lyric.slice(0, -1).split("\n");
+          arr.forEach((e) => {
+            //时间单位：毫秒
+            obj = {};
+            if (e.split("]")[1] !== undefined) {
+              obj.words = e.split("]")[1].trim();
+            } else {
+              obj.words = e;
+            }
+            strLyric += obj.words + "\r\n";
+            let time = e.split("]")[0].trim().split("[")[1];
+            let m = 0;
+            let s = 0;
+            let ms = 0;
+            if (time) {
+              m = parseInt(time.split(":")[0]);
+              s = parseInt(time.split(":")[1].split(".")[0]);
+              ms = parseInt(time.split(":")[1].split(".")[1]);
+            } else {
+              m = 0;
+              s = 0;
+              ms = 0;
+            }
+
+            obj.Millisecond_time = (m * 60 + s) * 1000 + ms;
+            all_arr.push(obj);
+          });
+          song_lyric.value.lyric_str = strLyric;
+          song_lyric.value.lyric_arr = all_arr;
+          song_lyric.value.lyric_arr.forEach((el, index) => {
+            if (index >= song_lyric.value.lyric_arr.length - 1) {
+              el.next_millisecond_time = song_info.value.dt;
+            } else {
+              el.next_millisecond_time =
+                song_lyric.value.lyric_arr[index + 1].Millisecond_time;
+            }
+          });
         }
-        let arr = res.lrc.lyric.slice(0, -1).split("\n");
-        arr.forEach((e) => {
-          //时间单位：毫秒
-          obj = {};
-          if (e.split("]")[1]) {
-            obj.words = e.split("]")[1].trim();
-          } else {
-            obj.words = "";
-          }
-          strLyric += obj.words + "\r\n";
-          let time = e.split("]")[0].trim().split("[")[1];
-          let m = parseInt(time.split(":")[0]);
-          let s = parseInt(time.split(":")[1].split(".")[0]);
-          let ms = parseInt(time.split(":")[1].split(".")[1]);
-          obj.Millisecond_time = (m * 60 + s) * 1000 + ms;
-          all_arr.push(obj);
-        });
-        song_lyric.value.lyric_str = strLyric;
-        song_lyric.value.lyric_arr = all_arr;
-        song_lyric.value.lyric_arr.forEach((el, index) => {
-          if (index >= song_lyric.value.lyric_arr.length - 1) {
-            el.next_millisecond_time = song_info.value.dt;
-          } else {
-            el.next_millisecond_time =
-              song_lyric.value.lyric_arr[index + 1].Millisecond_time;
-          }
-        });
       }
     }
     /**
@@ -598,8 +609,6 @@ export default defineComponent({
         before
       );
       loading_flag.value = false;
-
-      console.log(res);
       if (res && res.code === 200) {
         if (pageNO.value == 1) {
           CountTotal.value = res.total;

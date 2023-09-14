@@ -3,6 +3,7 @@ import App from "./App.vue"; //导入根组件
 import LOADING from "@/components/tool_components/loading.vue"; //导入全局组件loading
 import goBack from "@/components/tool_components/goBack.vue"; //导入全局组件goBack
 import videoPlayer from "@/components/video_player/index.vue"; //导入全局组件video_player
+import bar from "@/components/bar/index.vue"; //导入全局组件bar
 import router from "./router"; //导入路由配置
 import store from "./store"; //导入vuex仓库
 import ElementPlus from "element-plus"; //导入element-plus 组件库
@@ -36,4 +37,5 @@ createApp(App)
   .component("Loading", LOADING)
   .component("VIDEOPLAYER", videoPlayer)
   .component("goBack", goBack)
+  .component("Mbar", bar)
   .mount("#app");

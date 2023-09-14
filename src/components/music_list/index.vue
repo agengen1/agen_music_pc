@@ -195,6 +195,7 @@ export default defineComponent({
       };
       store.commit("player/ADDPLAYMUSIC_LIST", obj);
     }
+
     return {
       music_list_P,
       music_total_P,
@@ -340,9 +341,6 @@ export default defineComponent({
             width: 10%;
           }
         }
-      }
-      .odd_backColor {
-        background-color: #f9f9f9;
       }
     }
   }

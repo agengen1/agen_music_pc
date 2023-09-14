@@ -3,7 +3,10 @@
   <!-- <el-backtop :right="100" :bottom="100" />  element-puls组件返回顶部-->
   <van-back-top :offset="300" bottom="20vh" right="3%" />
   <!-- 播放器组件 -->
-  <!-- <PLAYCONTROL v-show="player_control_flag"></PLAYCONTROL> -->
+  <!-- <PLAYCONTROL
+    v-if="playMusic_list.length > 0"
+    v-show="player_control_flag"
+  ></PLAYCONTROL> -->
   <!-- 登录页面 -->
   <el-dialog v-model="login_openState" destroy-on-close title="登录">
     <LOGIN></LOGIN>
@@ -56,7 +59,9 @@ export default defineComponent({
       },
     }); //验证页面打开状态
     let userId = parseInt(localStorage.getItem("userId"));
-
+    let playMusic_list = computed(() => {
+      return store.state.player.playMusic_list;
+    });
     let player_control_flag = ref(true); //播放器的控制 true表示显示
     watch(
       //监听当前是否在{mv/视频}播放页面（在：隐藏播放控制栏）
@@ -106,6 +111,7 @@ export default defineComponent({
       login_openState,
       player_control_flag,
       verifyOpenStatus,
+      playMusic_list,
     };
   },
 });

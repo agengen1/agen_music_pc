@@ -54,3 +54,7 @@ i.follow_Highlight{
   font-size: 12px;
   margin-right: 2px;
 }
+
+.odd_backColor {
+  background-color: #f9f9f9;
+}

@@ -41,7 +41,9 @@
                   /></el-icon>
                 </span>
               </div>
-              <div class="personDesc">{{ item.signature.trim() }}</div>
+              <div class="personDesc text_exceed_hide_one">
+                {{ item.signature.trim() }}
+              </div>
             </div>
           </div>
           <div class="operate">

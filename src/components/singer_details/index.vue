@@ -56,15 +56,14 @@
               </span>
             </p>
             <p class="info_buttons">
-              <el-button type="primary" plain
-                ><el-icon><FolderAdd /></el-icon>收藏</el-button
-              >
+              <el-button type="primary" :icon="FolderAdd">收藏</el-button>
               <el-button
                 v-if="singerDetails.user && singerDetails.user.userId"
                 type="success"
-                plain
+                color="#6f10ff"
+                :icon="User"
                 @click="clickUserNameSkip_doc(singerDetails.user.userId)"
-                ><el-icon><User /></el-icon>个人主页</el-button
+                >个人主页</el-button
               >
             </p>
           </div>
@@ -107,8 +106,6 @@ export default defineComponent({
   name: "singerDetails",
   components: {
     goBack,
-    FolderAdd,
-    User,
     allAlbum,
     hotSongs,
     singerDesc,
@@ -161,6 +158,8 @@ export default defineComponent({
       singerDetails,
       computeSingerAs,
       clickUserNameSkip_doc,
+      FolderAdd,
+      User,
     };
   },
 });

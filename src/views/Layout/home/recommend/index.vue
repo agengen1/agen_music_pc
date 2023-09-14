@@ -10,7 +10,12 @@
     <div class="content">
       <div class="main">
         <div class="songsheet">
-          <h2><span>歌单推荐</span><span>更多</span></h2>
+          <h2>
+            <span>歌单推荐</span
+            ><span
+              >更多<el-icon><ArrowRightBold /> </el-icon
+            ></span>
+          </h2>
           <div class="songsheet_content">
             <el-carousel height="440px" direction="vertical" :interval="5000">
               <el-carousel-item>
@@ -26,7 +31,7 @@
                         v-lazy="item.picUrl + '?param=550y550'"
                         :alt="item.name"
                       />
-                      <p></p>
+                      <p><van-icon name="play" /></p>
                     </div>
                     <p>{{ item.name }}</p>
                   </div>
@@ -45,7 +50,7 @@
                         v-lazy="item.picUrl + '?param=550y550'"
                         :alt="item.name"
                       />
-                      <p></p>
+                      <p><van-icon name="play" /></p>
                     </div>
                     <p class="text_exceed_hide_two">{{ item.name }}</p>
                   </div>
@@ -64,7 +69,7 @@
                         v-lazy="item.picUrl + '?param=550y550'"
                         :alt="item.name"
                       />
-                      <p></p>
+                      <p><van-icon name="play" /></p>
                     </div>
                     <p>{{ item.name }}</p>
                   </div>
@@ -74,7 +79,12 @@
           </div>
         </div>
         <div class="music">
-          <h2><span>音乐推荐</span><span>更多</span></h2>
+          <h2>
+            <span>音乐推荐</span
+            ><span
+              >更多<el-icon><ArrowRightBold /> </el-icon
+            ></span>
+          </h2>
           <div class="music_content">
             <div
               class="music_one"
@@ -103,7 +113,12 @@
           </div>
         </div>
         <div class="charts">
-          <h2><span>排行榜</span><span>更多</span></h2>
+          <h2>
+            <span>排行榜</span>
+            <span
+              >更多<el-icon><ArrowRightBold /> </el-icon
+            ></span>
+          </h2>
           <div class="charts_content">
             <div
               class="charts_one"
@@ -128,6 +143,7 @@
 
                 <p class="view_all" @click="clickCharts_view_all(item)">
                   查看全部
+                  <el-icon><ArrowRightBold /> </el-icon>
                 </p>
               </div>
             </div>
@@ -156,7 +172,12 @@
           </div>
         </div>
         <div class="singer">
-          <h2><span>热门歌手</span><span>更多</span></h2>
+          <h2>
+            <span>热门歌手</span
+            ><span
+              >更多<el-icon><ArrowRightBold /> </el-icon
+            ></span>
+          </h2>
           <div class="singer_content">
             <div
               class="singer_one"
@@ -201,13 +222,14 @@ import { getSongSheet_Music_All_api } from "@/api/songSheetDeaitlsApi";
 import { computeMusicTimeDuration, computeSingerAs } from "@/assets/public";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { User } from "@element-plus/icons-vue";
+import { User, ArrowRightBold } from "@element-plus/icons-vue";
 import { playCountTransform } from "@/assets/public";
 
 export default defineComponent({
   name: "recommend",
   components: {
     User,
+    ArrowRightBold,
   },
   setup() {
     /**
@@ -425,6 +447,8 @@ export default defineComponent({
             &:nth-child(2) {
               font-size: 14px;
               color: #989898;
+              display: flex;
+              align-items: center;
               cursor: pointer;
               &:hover {
                 text-decoration: underline;
@@ -460,19 +484,26 @@ export default defineComponent({
                 }
                 p {
                   position: absolute;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
                   top: 50%;
                   left: 50%;
                   margin-left: -25px;
                   margin-top: -25px;
                   width: 50px;
                   height: 50px;
-                  background-color: #fffffff6;
+                  background-color: #ffffffc9;
                   border-radius: 50%;
                   border: 1px solid #d8d8d8;
                   z-index: 2;
                   transform: scale(0);
                   opacity: 0;
                   transition: all 0.4s;
+                  i {
+                    font-size: 30px;
+                    color: #ff006c;
+                  }
                 }
                 img {
                   width: 100%;
@@ -508,6 +539,8 @@ export default defineComponent({
             &:nth-child(2) {
               font-size: 14px;
               color: #989898;
+              display: flex;
+              align-items: center;
               cursor: pointer;
               &:hover {
                 text-decoration: underline;
@@ -590,6 +623,8 @@ export default defineComponent({
             &:nth-child(2) {
               font-size: 14px;
               color: #989898;
+              display: flex;
+              align-items: center;
               cursor: pointer;
               &:hover {
                 text-decoration: underline;
@@ -667,6 +702,7 @@ export default defineComponent({
                 display: flex;
                 font-size: 14px;
                 justify-content: flex-end;
+                align-items: center;
                 cursor: pointer;
                 &:hover {
                   text-decoration: underline;
@@ -737,6 +773,8 @@ export default defineComponent({
             &:nth-child(2) {
               font-size: 14px;
               color: #989898;
+              display: flex;
+              align-items: center;
               cursor: pointer;
               &:hover {
                 text-decoration: underline;

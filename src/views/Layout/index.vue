@@ -17,6 +17,7 @@
       <el-menu-item v-if="user_isLogin" index="/layout/follow"
         >关注</el-menu-item
       >
+      <!-- 用户信息 -->
       <div class="other_fun">
         <div class="sea_header">
           <search :useDom="'all'"></search>
@@ -31,7 +32,9 @@
             </div>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item :icon="icon.Connection"
+                <el-dropdown-item
+                  :icon="icon.Connection"
+                  @click="clickUserNameSkip_doc(user_userinfo.userId)"
                   >我的信息</el-dropdown-item
                 >
                 <el-dropdown-item :icon="icon.TrophyBase"
@@ -49,6 +52,7 @@
         </p>
         <p class="login_user" v-else @click="clickOpenLogin">登录</p>
       </div>
+      <!-- github头像模块 -->
       <div class="github_icon">
         <a href="https://github.com/agengen1/agen_music_pc" target="_blank">
           <i
@@ -56,8 +60,8 @@
             class="iconfont icon-github"
           ></i>
         </a>
-      </div>
-    </el-menu>
+      </div> </el-menu
+    >·
   </div>
   <router-view></router-view>
   <div class="Layout_Footer" v-if="disappear_footer"></div>
@@ -104,6 +108,14 @@ export default defineComponent({
         return true;
       }
     });
+    /**
+     * 点击跳转用户详情页面
+     * @param {string | number} id 用户id
+     */
+    function clickUserNameSkip_doc(id) {
+      router.push("/layout/home/userDetails/" + id);
+    }
+
     /**
      * 点击退出登录
      */
@@ -162,6 +174,7 @@ export default defineComponent({
       user_isLogin,
       clickOpenLogin,
       clickLogout,
+      clickUserNameSkip_doc,
     };
   },
 });
@@ -178,6 +191,7 @@ export default defineComponent({
   }
 }
 .Layout_Header {
+  height: 80px;
   .el-menu {
     margin: 0 auto;
     width: 100%;
@@ -252,10 +266,11 @@ export default defineComponent({
     }
   }
   /deep/ .el-input--large .el-input__wrapper {
-    border-radius: 20px;
+    border-radius: 5px;
   }
 }
 .Layout_Footer {
+  margin-top: 30px;
   width: 100%;
   height: 25vh;
   background-color: #333;
