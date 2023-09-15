@@ -31,10 +31,14 @@
           v-for="(item, index) in searchSuggestions_data.order"
           :key="index"
         >
-          <h4 v-if="item === 'songs'">单曲</h4>
-          <h4 v-if="item === 'artists'">歌手</h4>
-          <h4 v-if="item === 'albums'">专辑</h4>
-          <h4 v-if="item === 'playlists'">歌单</h4>
+          <h4 v-if="item === 'songs' && searchSuggestions_data[item]">单曲</h4>
+          <h4 v-if="item === 'artists' && searchSuggestions_data[item]">
+            歌手
+          </h4>
+          <h4 v-if="item === 'albums' && searchSuggestions_data[item]">专辑</h4>
+          <h4 v-if="item === 'playlists' && searchSuggestions_data[item]">
+            歌单
+          </h4>
           <p
             class="text_exceed_hide_one"
             v-for="item_child in searchSuggestions_data[item]"

@@ -191,12 +191,12 @@ export default defineComponent({
   }
 }
 .Layout_Header {
-  height: 80px;
+  height: 70px;
   .el-menu {
     margin: 0 auto;
     width: 100%;
     padding: 0 6%;
-    height: 80px;
+    height: 70px;
     .el-menu-item {
       font-size: 18px;
       font-weight: 700;

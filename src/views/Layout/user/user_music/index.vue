@@ -494,7 +494,7 @@ export default defineComponent({
 <style lang='less' scoped>
 .userMusic {
   width: 100%;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 70px);
   display: flex;
   /deep/ .el-form-item__label {
     color: #000;
