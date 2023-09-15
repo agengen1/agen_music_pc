@@ -7,10 +7,6 @@
   ></Loading>
   <div v-else>
     <div class="singerDetails_content">
-      <div class="left">
-        <h3>相似歌手</h3>
-        <div class="left_con"></div>
-      </div>
       <div class="right">
         <div class="details">
           <div class="backimg">
@@ -88,6 +84,35 @@
           </van-tabs>
         </div>
       </div>
+      <div class="left">
+        <h3>相似歌手</h3>
+        <Loading
+          v-if="similarSinger_flag"
+          textColor="#409eff"
+          title="加载中..."
+        ></Loading>
+        <div class="left_con" v-else>
+          <ul>
+            <li v-for="item in similarSinger" :key="item.id">
+              <div class="singer_content_left">
+                <img v-lazy="item.picUrl + '?param=80y80'" :alt="item.name" />
+              </div>
+              <div class="singer_content_right">
+                <p>
+                  <span @click="clickSkipSingerDetails(item.id)">{{
+                    item.name
+                  }}</span>
+                  <span v-if="item.trans != null">{{ item.trans }}</span>
+                </p>
+                <p>
+                  <span>{{ item.albumSize }}个专辑</span>
+                  <span>{{ item.musicSize }}首音乐</span>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -114,12 +139,15 @@ export default defineComponent({
     let route = useRoute();
     let router = useRouter();
     let singerDetails = ref({}); //歌手详情
-    let similarSinger = ref({}); //
+    let similarSinger = ref({}); //相似歌手数据
+    let similarSinger_flag = ref(true); //相似歌手请求状态
     watch(
       () => route.params.singerId,
       (newVal) => {
+        similarSinger_flag.value = true;
         singerDetails.value = {};
         getSingerDetails(newVal);
+        getSingerSimilar(newVal);
       },
       {
         immediate: true,
@@ -133,6 +161,14 @@ export default defineComponent({
       router.push("/layout/home/userDetails/" + id);
     }
     /**
+     * 点击跳转歌手详情页面
+     * @param {string |number} singerId
+     */
+    function clickSkipSingerDetails(singerId) {
+      // TODO:
+      router.push(`/layout/home/singerDetails/${singerId}`);
+    }
+    /**
      * 歌手详情获取
      * @param {String | number} id 歌手id
      */
@@ -143,23 +179,26 @@ export default defineComponent({
       }
     }
     /**
-     * 相似歌手获取 -- 需要登录
+     * 相似歌手获取
      * @param {String | number} id 歌手id
      */
     async function getSingerSimilar(id) {
       const { data: res } = await getSingerSimilarapi(id);
-      console.log(res);
+      similarSinger_flag.value = false;
       if (res && res.code === 200) {
+        similarSinger.value = res.artists;
       }
     }
-    getSingerSimilar(route.params.singerId);
 
     return {
       singerDetails,
       computeSingerAs,
       clickUserNameSkip_doc,
+      similarSinger_flag,
+      similarSinger,
       FolderAdd,
       User,
+      clickSkipSingerDetails,
     };
   },
 });
@@ -176,12 +215,63 @@ export default defineComponent({
   }
   .left {
     width: 25%;
-    border: 1px solid red;
     h3 {
       padding-left: 5px;
       height: 35px;
       line-height: 35px;
-      border-left: 4px solid #23d623;
+    }
+    .left_con {
+      padding: 0 10px;
+      ul {
+        li {
+          padding: 8px;
+          display: flex;
+          width: 100%;
+          &:hover {
+            background-color: #f3f3f3;
+          }
+          .singer_content_left {
+            width: 20%;
+            img {
+              width: 100%;
+            }
+          }
+          .singer_content_right {
+            padding-left: 5px;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            p {
+              &:nth-child(1) {
+                span {
+                  font-size: 14px;
+                  color: #333;
+                  font-weight: 700;
+                  &:nth-child(1) {
+                    cursor: pointer;
+                    &:hover {
+                      text-decoration: underline;
+                      color: #409eff;
+                    }
+                  }
+                  &:nth-child(2) {
+                    margin-left: 5px;
+                    color: #a8abb2;
+                    font-size: 12px;
+                  }
+                }
+              }
+              &:nth-child(2) {
+                span {
+                  color: #898989;
+                  margin-right: 5px;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
   .right {

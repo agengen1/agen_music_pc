@@ -266,7 +266,33 @@
             </p>
           </div>
         </div>
-        <div class="user_info_content_other"></div>
+        <div class="user_info_content_singer">
+          <h3>
+            <span>喜欢的歌手</span
+            ><span>查看更多<van-icon name="arrow" /></span>
+          </h3>
+          <div class="singer_content">
+            <ul>
+              <li v-for="item in likeSinger_data" :key="item.id">
+                <div class="singer_content_left">
+                  <img v-lazy="item.picUrl + '?param=80y80'" :alt="item.name" />
+                </div>
+                <div class="singer_content_right">
+                  <p>
+                    <span @click="clickSkipSingerDetails(item.id)">{{
+                      item.name
+                    }}</span>
+                    <span v-if="item.trans != null">{{ item.trans }}</span>
+                  </p>
+                  <p>
+                    <span>{{ item.albumSize }}个专辑</span>
+                    <span>{{ item.mvSize }}个MV</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -279,6 +305,7 @@ import {
   getNetEaseCloudNickName_api,
 } from "@/api/followApi";
 import { getUserDetailsapi } from "@/api/userDetailsApi";
+import { getSingerMeLikeapi } from "@/api/singerApi";
 import {
   ArrowLeftBold,
   ArrowRightBold,
@@ -308,9 +335,8 @@ export default defineComponent({
     let follow_flag = ref(true); //动态请求状态 true请求中
     let user_info = ref({}); //用户信息
     let userinfo_flag = ref(true); //用户信息请求状态 true请求中
-    let userId = computed(() => {
-      return store.state.user.userinfo.userId;
-    });
+    let userId = window.localStorage.getItem("userId"); //用户id
+    let likeSinger_data = ref([]); //喜欢的歌手（前5名歌手）
     let leftDisabled = computed(() => {
       return pageNO.value <= 1;
     }); //左边按钮是否禁用
@@ -450,14 +476,34 @@ export default defineComponent({
       }
     }
     /**
+     * 点击跳转歌手详情页面
+     * @param {string |number} singerId
+     */
+    function clickSkipSingerDetails(singerId) {
+      // TODO:
+      router.push(`/layout/home/singerDetails/${singerId}`);
+    }
+    /**
+     * 获取喜欢的歌手
+     * @param {number}  limit: 取出歌单数量 , 默认为 25
+     * @param {number}  offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*25, 其中 25 为 limit 的值
+     */
+    async function getSingerMeLike(limit, offset) {
+      const { data: res } = await getSingerMeLikeapi(limit, offset);
+      userinfo_flag.value = false;
+      if (res && res.code === 200) {
+        likeSinger_data.value = res.data;
+      }
+    }
+    /**
      * 获取用户详情
      * @param { String | Number} id 用户id
      */
     async function getUserDetails(id) {
       const { data: res } = await getUserDetailsapi(id);
-      userinfo_flag.value = false;
       if (res && res.code === 200) {
         user_info.value = res;
+        getSingerMeLike(10, 1);
       }
     }
     /**
@@ -516,7 +562,7 @@ export default defineComponent({
       }
     }
     getMyFollowerData(pageCount.value, 0, false);
-    getUserDetails(userId.value);
+    getUserDetails(userId);
     return {
       followList,
       pageNO,
@@ -525,6 +571,7 @@ export default defineComponent({
       follow_flag,
       ArrowLeftBold,
       leftDisabled,
+      likeSinger_data,
       Pointer,
       stamp_time,
       computeSingerAs,
@@ -541,6 +588,7 @@ export default defineComponent({
       computeMusicTimeDuration,
       clickSkpiWebPag,
       clickLookedImg,
+      clickSkipSingerDetails,
     };
   },
 });
@@ -892,6 +940,79 @@ export default defineComponent({
           cursor: pointer;
           &:hover {
             color: #409eff;
+          }
+        }
+      }
+    }
+    .user_info_content_singer {
+      padding: 10px 30px 30px 30px;
+      h3 {
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+        span {
+          &:nth-child(2) {
+            cursor: pointer;
+            color: #a8abb2;
+            font: 700 12px "";
+            &:hover {
+              color: #409eff;
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      .singer_content {
+        padding: 0 5px;
+        ul {
+          li {
+            padding: 5px;
+            display: flex;
+            width: 100%;
+            &:hover {
+              background-color: #f3f3f3;
+            }
+            .singer_content_left {
+              width: 20%;
+              img {
+                width: 100%;
+              }
+            }
+            .singer_content_right {
+              padding-left: 5px;
+              width: 80%;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+              p {
+                &:nth-child(1) {
+                  span {
+                    font-size: 14px;
+                    color: #333;
+                    font-weight: 700;
+                    &:nth-child(1) {
+                      cursor: pointer;
+                      &:hover {
+                        text-decoration: underline;
+                        color: #409eff;
+                      }
+                    }
+                    &:nth-child(2) {
+                      margin-left: 5px;
+                      color: #a8abb2;
+                      font-size: 12px;
+                    }
+                  }
+                }
+                &:nth-child(2) {
+                  span {
+                    color: #898989;
+                    margin-right: 5px;
+                  }
+                }
+              }
+            }
           }
         }
       }
