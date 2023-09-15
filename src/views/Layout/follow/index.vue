@@ -233,7 +233,42 @@
         ></el-button>
       </div>
     </div>
-    <div class="user_info"></div>
+
+    <div class="user_info">
+      <Loading
+        v-if="userinfo_flag"
+        textColor="#409eff"
+        title="加载中..."
+      ></Loading>
+      <div v-else>
+        <div class="user_info_content">
+          <div class="user_info_content_top">
+            <img
+              v-lazy="user_info.profile.avatarUrl"
+              :title="user_info.profile.nickname"
+            />
+            <span>{{ user_info.profile.nickname }}</span>
+          </div>
+          <div class="user_info_content_bottom">
+            <p class="event">
+              <span>{{ user_info.profile.eventCount }}</span>
+              <span>动态</span>
+            </p>
+            <el-divider direction="vertical" />
+            <p class="followed">
+              <span>{{ user_info.profile.follows }}</span>
+              <span>关注</span>
+            </p>
+            <el-divider direction="vertical" />
+            <p class="fans">
+              <span>{{ user_info.profile.followeds }}</span>
+              <span>粉丝</span>
+            </p>
+          </div>
+        </div>
+        <div class="user_info_content_other"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -243,6 +278,7 @@ import {
   getMyFollowerData_api,
   getNetEaseCloudNickName_api,
 } from "@/api/followApi";
+import { getUserDetailsapi } from "@/api/userDetailsApi";
 import {
   ArrowLeftBold,
   ArrowRightBold,
@@ -269,7 +305,12 @@ export default defineComponent({
     let pageNO = ref(1); //当前第几页
     let followList = reactive({}); //动态数据
     let pageCount = ref(30); //每一页多少条数据
-    let follow_flag = ref(true); //请求状态 true请求中
+    let follow_flag = ref(true); //动态请求状态 true请求中
+    let user_info = ref({}); //用户信息
+    let userinfo_flag = ref(true); //用户信息请求状态 true请求中
+    let userId = computed(() => {
+      return store.state.user.userinfo.userId;
+    });
     let leftDisabled = computed(() => {
       return pageNO.value <= 1;
     }); //左边按钮是否禁用
@@ -408,7 +449,17 @@ export default defineComponent({
         });
       }
     }
-
+    /**
+     * 获取用户详情
+     * @param { String | Number} id 用户id
+     */
+    async function getUserDetails(id) {
+      const { data: res } = await getUserDetailsapi(id);
+      userinfo_flag.value = false;
+      if (res && res.code === 200) {
+        user_info.value = res;
+      }
+    }
     /**
      * 根据nickname获取userid
      * @param {string} nickname  用户nickname
@@ -465,9 +516,12 @@ export default defineComponent({
       }
     }
     getMyFollowerData(pageCount.value, 0, false);
+    getUserDetails(userId.value);
     return {
       followList,
       pageNO,
+      user_info,
+      userinfo_flag,
       follow_flag,
       ArrowLeftBold,
       leftDisabled,
@@ -792,6 +846,56 @@ export default defineComponent({
   .user_info {
     border-left: 0.5px solid #e8e8e9;
     width: 30%;
+    display: flex;
+    flex-direction: column;
+    .user_info_content {
+      display: flex;
+      flex-direction: column;
+      background-color: #f7f7f7bd;
+      .user_info_content_top {
+        padding: 30px 0 30px 30px;
+
+        display: flex;
+        img {
+          margin-right: 10px;
+          width: 20%;
+          object-fit: cover;
+          border-radius: 5%;
+        }
+        span {
+          color: #333;
+          font: 700 18px "";
+          cursor: pointer;
+          &:hover {
+            text-decoration: underline;
+            color: #409eff;
+          }
+        }
+      }
+      .user_info_content_bottom {
+        padding: 0 0 30px 30px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        .el-divider--vertical {
+          height: 2em;
+        }
+        p {
+          margin: 0 10px;
+          display: flex;
+          height: 100%;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          font: 700 14px "";
+          color: #898989;
+          cursor: pointer;
+          &:hover {
+            color: #409eff;
+          }
+        }
+      }
+    }
   }
 }
 </style>

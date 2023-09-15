@@ -12,7 +12,7 @@ export const getRecommendMusicapi = () => {
 
 // 热门推荐歌单
 export const getRecommendSongSheetapi = () => {
-  return axios.get(`/personalized?limit=30&timestamp=${Date.now()}`);
+  return axios.get(`/personalized?limit=28&timestamp=${Date.now()}`);
 };
 
 // 热门歌手获取

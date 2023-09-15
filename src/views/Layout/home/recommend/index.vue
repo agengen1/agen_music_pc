@@ -106,7 +106,7 @@
                   </p>
                 </div>
                 <div class="right">
-                  {{ computeMusicTimeDuration(item.song.hMusic.playTime) }}
+                  {{ computeMusicTimeDuration(item.song.duration) }}
                 </div>
               </div>
             </div>

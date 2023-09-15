@@ -391,7 +391,6 @@ export default defineComponent({
      */
     async function getUserDetails(id) {
       const { data: res } = await getUserDetailsapi(id);
-      console.log(res);
       if (res && res.code === 200) {
         user_info.value = res;
       }

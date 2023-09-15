@@ -35,7 +35,7 @@
                 <el-dropdown-item
                   :icon="icon.Connection"
                   @click="clickUserNameSkip_doc(user_userinfo.userId)"
-                  >我的信息</el-dropdown-item
+                  >我的主页</el-dropdown-item
                 >
                 <el-dropdown-item :icon="icon.TrophyBase"
                   >我的等级</el-dropdown-item
