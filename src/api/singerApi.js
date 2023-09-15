@@ -43,3 +43,14 @@ export const getSingerAlbumapi = (id, limit, offset) => {
     `/artist/album?id=${id}&limit=${limit}&offset=${(offset - 1) * limit}`
   );
 };
+
+/**
+ * 获取喜欢的歌手
+ * @param {number}  limit: 取出歌单数量 , 默认为 25
+ * @param {number}  offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*25, 其中 25 为 limit 的值
+ */
+export const getSingerMeLikeapi = (limit, offset) => {
+  return axios.get(
+    `/artist/sublist?limit=${limit}&offset=${(offset - 1) * limit}`
+  );
+};
