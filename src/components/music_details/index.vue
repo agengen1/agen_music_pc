@@ -25,12 +25,6 @@
           >
           <span>{{ stamp_time(SongSheet_details.createTime) }} 创建</span>
         </div>
-        <div
-          class="SongSheet_desc"
-          v-if="SongSheet_details.description !== null"
-        >
-          <span>介绍：</span>{{ SongSheet_details.description }}
-        </div>
         <div class="SongSheet_other">
           <el-button type="primary" size="large" :icon="icon.VideoPlay"
             >播放全部</el-button
@@ -41,6 +35,29 @@
           <el-button type="info" size="large" plain :icon="icon.Comment"
             >评论({{ SongSheet_details.commentCount }})</el-button
           >
+        </div>
+        <div
+          class="SongSheet_desc"
+          v-if="SongSheet_details.description_arr.length > 0"
+        >
+          <p class="h_desc">介绍：</p>
+          <div class="content_desc">
+            <p
+              v-for="(item, index) in SongSheet_details.description_arr"
+              :key="index"
+            >
+              {{ item }}
+            </p>
+          </div>
+
+          <div class="button_control">
+            <span v-if="el_button_text === '收起'" @click="clickPackUpText()"
+              >收起<van-icon name="arrow-up"
+            /></span>
+            <span v-else @click="clickExpandText()"
+              >展开<van-icon name="arrow-down"
+            /></span>
+          </div>
         </div>
       </div>
     </div>
@@ -63,6 +80,8 @@ import {
 } from "@/api/songSheetDeaitlsApi";
 import { Share, Comment, VideoPlay } from "@element-plus/icons-vue";
 import { stamp_time } from "@/assets/public";
+import { ElMessage } from "element-plus";
+
 export default defineComponent({
   name: "musicDetails",
   components: {
@@ -73,6 +92,37 @@ export default defineComponent({
     let router = useRouter();
     let SongSheet_details = ref({});
     let data_loading = ref(true);
+    let desc_height = ref(50); //desc允许展示高度
+    let desc_el_height = ref(0); //元素正常显示高度
+    let el_desc_content = null; //展示desc元素
+    let el_button_text = ref("展开"); //按钮展示打开状态
+    /**
+     * 点击展开
+     */
+    function clickExpandText() {
+      ElMessage.closeAll();
+      desc_el_height.value = 0;
+      el_desc_content = document.querySelector(".content_desc");
+      el_desc_content.querySelectorAll("p").forEach((el) => {
+        desc_el_height.value += el.scrollHeight;
+      });
+      if (desc_el_height.value <= desc_height.value) {
+        //判断是否全部展示
+        return ElMessage({
+          type: "warning",
+          message: "已展示全部内容！",
+        });
+      }
+      el_desc_content.style.height = desc_el_height.value + "px";
+      el_button_text.value = "收起";
+    }
+    /**
+     * 点击收起
+     */
+    function clickPackUpText() {
+      el_desc_content.style.height = desc_height.value + "px";
+      el_button_text.value = "展开";
+    }
     /**
      * 点击跳转用户详情页面
      * @param {string | number} id 用户id
@@ -95,7 +145,12 @@ export default defineComponent({
           res.playlist["SongSheet_allMusic"] = res_all.songs;
           SongSheet_details.value = markRaw(res.playlist);
           data_loading.value = false;
-          console.log(SongSheet_details.value);
+          if (SongSheet_details.value.description) {
+            SongSheet_details.value["description_arr"] =
+              SongSheet_details.value.description.split("\n");
+          } else {
+            SongSheet_details.value["description_arr"] = [];
+          }
         }
       }
     }
@@ -133,6 +188,10 @@ export default defineComponent({
       SongSheet_details,
       clickUserNameSkip_doc,
       stamp_time,
+      el_button_text,
+      clickPackUpText,
+      clickExpandText,
+      desc_height_str: desc_height.value + "px",
       icon: {
         Share,
         Comment,
@@ -183,15 +242,37 @@ export default defineComponent({
         }
       }
       .SongSheet_desc {
-        margin: 0 0 10px 5px;
+        margin: 10px 0 10px 5px;
         font: 500 14px "";
-        color: #a7a7a7;
-        span {
+        color: #8f8f8f;
+
+        .h_desc {
           color: #717171;
+          padding: 0px;
+          font-weight: 700;
+        }
+        .content_desc {
+          height: v-bind(desc_height_str);
+          transition: all 0.3s;
+          overflow: hidden;
+          p {
+            padding: 5px 10px;
+            line-height: 25px;
+          }
+        }
+        .button_control {
+          margin-top: 10px;
+          padding-right: 25px;
+          display: flex;
+          justify-content: flex-end;
+          span {
+            cursor: pointer;
+            color: #409eff;
+          }
         }
       }
       .createPerson {
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         img {
           margin-right: 5px;
           width: 30px;

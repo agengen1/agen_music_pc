@@ -97,7 +97,8 @@ export function SearchTextHighlight(repText, SearchBeRepText) {
 export function FollowWordHighlight(repObj) {
   let regex = /#([^#]+)#/g;
   let str = repObj.text;
-  str = str.replace(/\r\n/g, "<br/>");
+  str = str.replace(/\\n/g, "<br/>");
+  str = str.replace(/\\r/g, "<br/>");
   let arr = str.match(regex);
   if (arr && arr.length > 0) {
     for (let i = 0; i < arr.length; i++) {

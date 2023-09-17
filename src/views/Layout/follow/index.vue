@@ -425,7 +425,15 @@ export default defineComponent({
           singerName = singerName.trim().slice(1);
           getNetEaseCloudNickName(singerName).then((res) => {
             //跳转用户详情
-            router.push(`/layout/home/userDetails/${res}`);
+
+            if (res) {
+              router.push(`/layout/home/userDetails/${res}`);
+            } else {
+              ElMessage({
+                type: "error",
+                message: "跳转失败！",
+              });
+            }
           });
         } else {
           ElMessage({

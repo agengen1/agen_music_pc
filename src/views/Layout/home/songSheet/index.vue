@@ -116,6 +116,10 @@ export default defineComponent({
       pagNo.value = No;
       songSheet_loading_flag.value = true;
       getSongSheetList(selectTag.value, pagCount.value, pagNo.value);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth", // 平滑滚动效果
+      });
     }
     /**
      * 点击跳转歌单详情页
