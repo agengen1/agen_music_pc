@@ -82,7 +82,7 @@
             v-if="login_id === item.userId"
           >
             <el-button
-              color="#ff006d"
+              color="#b71c1c"
               type="info"
               :icon="User"
               circle
@@ -146,7 +146,7 @@ export default defineComponent({
     let user_info = ref({}); //用户信息
     let login_id = ref(parseInt(localStorage.getItem("userId"))); //登录者id
     watch(
-      () => route.params.userId,
+      () => route.params.userIdFollowed,
       (newVal) => {
         if (newVal) {
           pagNo.value = 1;
@@ -184,7 +184,7 @@ export default defineComponent({
       pagNo.value = No;
       followedList_falg.value = true;
       getUserFollowedList(
-        route.params.userId,
+        route.params.userIdFollowed,
         pagCount.value,
         pagNo.value,
         true
@@ -226,6 +226,7 @@ export default defineComponent({
           type: "warning",
           message: res.message,
         });
+        followedList.value = [];
       }
     }
     return {

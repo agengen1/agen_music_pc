@@ -148,9 +148,11 @@
               <div class="played_index">{{ index + 1 }}</div>
               <div class="played_info">
                 <div class="played_info_left text_exceed_hide_one">
-                  <span class="played_info_left_name text_exceed_hide_one">{{
-                    item.song.name
-                  }}</span>
+                  <span
+                    class="played_info_left_name text_exceed_hide_one"
+                    @click="clickMuiscName_Skpi_doc(item.song.id)"
+                    >{{ item.song.name }}</span
+                  >
                   <span class="played_info_left_ar text_exceed_hide_one">
                     - {{ computeSingerAs(item.song.ar) }}</span
                   >
@@ -395,6 +397,16 @@ export default defineComponent({
       router.push(`/layout/home/followedList/${userid}`);
     }
     /**
+     * clickMuiscName_Skpi_doc
+     * @param {number} id
+     * 功能::点击跳转音乐详情页面
+     */
+    function clickMuiscName_Skpi_doc(id) {
+      console.log(id);
+      // DOTO:
+      router.push("/layout/home/songDetails/" + id);
+    }
+    /**
      * 点击跳转粉丝列表详情
      * @param {number} userid 用户id
      */
@@ -486,6 +498,7 @@ export default defineComponent({
       user_r_played,
       user_r_played_type,
       computeSingerAs,
+      clickMuiscName_Skpi_doc,
     };
   },
 });

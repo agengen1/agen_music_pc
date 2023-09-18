@@ -141,7 +141,7 @@ const routes = [
               import("@/components/search/searchResult/index.vue"),
           },
           {
-            path: "followedList/:userId",
+            path: "followedList/:userIdFollowed",
             name: "followedList",
             meta: {
               title: "关注列表",
@@ -149,7 +149,7 @@ const routes = [
             component: () => import("@/components/followedList/index.vue"),
           },
           {
-            path: "fansList/:userId",
+            path: "fansList/:userIdFans",
             name: "fansList",
             meta: {
               title: "粉丝列表",

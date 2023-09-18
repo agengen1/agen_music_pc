@@ -92,10 +92,11 @@
           <div class="info_content_right" v-else>
             <el-button
               type="success"
-              :icon="Check"
+              :icon="Link"
+              color="#d84315"
               size="small"
               v-if="item.followed"
-              >已关注</el-button
+              >相互关注</el-button
             >
             <el-button type="primary" :icon="Plus" size="small" v-else
               >关注</el-button
@@ -125,7 +126,7 @@ import { defineComponent, watch, ref } from "vue";
 import { getUserFansListapi } from "@/api/userDetailsApi";
 import { getUserDetailsapi } from "@/api/userDetailsApi";
 import { useRouter, useRoute } from "vue-router";
-import { Plus, Check, Female, Male, User } from "@element-plus/icons-vue";
+import { Plus, Link, Female, Male, User } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -146,7 +147,7 @@ export default defineComponent({
     let user_info = ref({}); //用户信息
     let login_id = ref(parseInt(localStorage.getItem("userId"))); //登录者id
     watch(
-      () => route.params.userId,
+      () => route.params.userIdFans,
       (newVal) => {
         if (newVal) {
           pagNo.value = 1;
@@ -183,7 +184,12 @@ export default defineComponent({
     function handlerCurrentChange(No) {
       pagNo.value = No;
       fansList_falg.value = true;
-      getUserFansList(route.params.userId, pagCount.value, pagNo.value, true);
+      getUserFansList(
+        route.params.userIdFans,
+        pagCount.value,
+        pagNo.value,
+        true
+      );
     }
     /**
      * 获取用户详情
@@ -221,6 +227,7 @@ export default defineComponent({
           type: "warning",
           message: res.message,
         });
+        fansList.value = [];
       }
     }
     return {
@@ -233,7 +240,7 @@ export default defineComponent({
       all_doc_flag,
       user_info,
       Plus,
-      Check,
+      Link,
       User,
       login_id,
       click_typeSkipDoc,
