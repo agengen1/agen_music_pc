@@ -242,7 +242,16 @@
     </div>
     <el-drawer class="openLyric" v-model="openAllLyric" size="45%">
       <template v-slot:header>
-        <p>{{ song_info.name }} <span>(完整歌词)</span></p>
+        <p class="lyric_title">{{ song_info.name }} <span>(完整歌词)</span></p>
+        <p class="lyric_copy">
+          <el-button
+            size="small"
+            :icon="CopyDocument"
+            type="primary"
+            @click="click_lyricCopy(song_info.name, song_lyric.lyric_arr)"
+            >复制歌词</el-button
+          >
+        </p>
       </template>
       <ul v-if="song_lyric.lyric_arr">
         <li v-for="item in song_lyric.lyric_arr" :key="item.Millisecond_time">
@@ -281,6 +290,7 @@ import {
   Clock,
   ArrowLeftBold,
   ArrowRightBold,
+  CopyDocument,
 } from "@element-plus/icons-vue";
 import { stamp_time } from "@/assets/public";
 import { useStore } from "vuex";
@@ -410,6 +420,37 @@ export default defineComponent({
       } else {
         openAllLyric.value = true;
       }
+    }
+    /**
+     * 点击复制歌词
+     * @param {array}  lyric_arr 歌词数组
+     */
+    function click_lyricCopy(song_name, lyric_arr) {
+      if (lyric_arr.length <= 0) {
+        ElMessage({
+          type: "warning",
+          message: "暂无可复制歌词",
+        });
+      }
+      let str = "";
+      lyric_arr.forEach((el) => {
+        str += el.words + "\n";
+      });
+      str = song_name + "\n" + "\n" + str;
+      navigator.clipboard
+        .writeText(str)
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: "歌词已成功复制到剪贴板",
+          });
+        })
+        .catch((error) => {
+          ElMessage({
+            type: "error",
+            message: `复制歌词到剪贴板时出错:${error.message}`,
+          });
+        });
     }
     /**
      * clickPlayButton_playMusic
@@ -649,7 +690,9 @@ export default defineComponent({
       clickPreButton_PreMusic,
       clickNextButton_NextMusic,
       clickUserNameSkip_doc,
+      click_lyricCopy,
       Download,
+      CopyDocument,
     };
   },
 });
@@ -842,8 +885,6 @@ export default defineComponent({
                           }
                         }
                       }
-                      &:nth-child(3) {
-                      }
                     }
                   }
                   &:nth-child(2) {
@@ -941,8 +982,6 @@ export default defineComponent({
                               }
                             }
                           }
-                          &:nth-child(3) {
-                          }
                         }
                       }
                     }
@@ -1016,13 +1055,16 @@ export default defineComponent({
   }
   .openLyric {
     .el-drawer__header {
-      p {
+      .lyric_title {
         font: 700 22px "华文楷书";
         color: #000;
         span {
           font-size: 14px;
           color: #848484;
         }
+      }
+      .lyric_copy {
+        margin-right: 40px;
       }
     }
     ul {
