@@ -108,3 +108,31 @@ export function CreatedVerifyapi(vid, type, token, evid, sign) {
 export function eventLoopVerifyapi(qr) {
   return axios.get(`/verify/qrcodestatus?qr=${qr}&timestamp=${Date.now()}`);
 }
+
+/**
+ * 获取用户关注列表
+ * @param {number | string} uId 用户id
+ * @param {number } limit  返回数量 , 默认为 30
+ * @param {number} offset  偏移数量，用于分页 ,如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ */
+export function getUserFollowedListapi(uId, limit, offset) {
+  return axios.get(
+    `/user/follows?uid=${uId}&limit=${limit}&offset=${
+      (offset - 1) * limit
+    }&timestamp=${Date.now()}`
+  );
+}
+
+/**
+ * 获取用户粉丝列表
+ * @param {number | string} uId 用户id
+ * @param {number } limit  返回数量 , 默认为 30
+ * @param {number} offset  偏移数量，用于分页 ,如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ */
+export function getUserFansListapi(uId, limit, offset) {
+  return axios.get(
+    `/user/followeds?uid=${uId}&limit=${limit}&offset=${
+      (offset - 1) * limit
+    }&timestamp=${Date.now()}`
+  );
+}

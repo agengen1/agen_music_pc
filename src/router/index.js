@@ -140,6 +140,22 @@ const routes = [
             component: () =>
               import("@/components/search/searchResult/index.vue"),
           },
+          {
+            path: "followedList/:userId",
+            name: "followedList",
+            meta: {
+              title: "关注列表",
+            },
+            component: () => import("@/components/followedList/index.vue"),
+          },
+          {
+            path: "fansList/:userId",
+            name: "fansList",
+            meta: {
+              title: "粉丝列表",
+            },
+            component: () => import("@/components/fansList/index.vue"),
+          },
         ],
       },
       {

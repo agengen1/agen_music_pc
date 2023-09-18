@@ -83,12 +83,12 @@
               <span>动态</span>
             </p>
             <el-divider direction="vertical" />
-            <p>
+            <p @click="clickSkipFollowedList(user_info.profile.userId)">
               <span>{{ user_info.profile.follows }}</span>
               <span>关注</span>
             </p>
             <el-divider direction="vertical" />
-            <p>
+            <p @click="clickSkipFansList(user_info.profile.userId)">
               <span>{{ user_info.profile.followeds }}</span>
               <span>粉丝</span>
             </p>
@@ -117,10 +117,8 @@
       </div>
       <!-- 最近播放 -->
       <div class="RecentlyPlayed" v-if="isPower">
-        <div class="played_top">
-          <h2>
-            听歌排行<span>累计听歌{{ 0 }}首</span>
-          </h2>
+        <div class="played_top" v-if="user_r_played.length > 0">
+          <h2>听歌排行</h2>
           <div class="select_data">
             <span
               :class="{ isSelect_played: user_r_played_type === 1 }"
@@ -246,7 +244,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import {
   Plus,
   Mic,
@@ -294,6 +292,19 @@ export default defineComponent({
     let user_r_played = ref([]); //听歌排行数据
     let r_played_flag = ref(true); //听歌排行数据请求状态
     let user_r_played_type = ref(1); //type=1时只返回weekData(本周播放记录), type=0时返回allData(全部播放记录)
+    watch(
+      () => route.params.userId,
+      (newVal) => {
+        if (newVal) {
+          getUserDetails(newVal);
+          getUserSongSheetDetails(newVal, 100, 1);
+          getUserPlayRecords(newVal, user_r_played_type.value);
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
     /**
      * 点击跳转歌单详情页
      * @param {string|number} id 歌单id
@@ -377,6 +388,20 @@ export default defineComponent({
       router.push(`/layout/home/singerDetails/${singerId}`);
     }
     /**
+     * 点击跳转关注列表详情
+     * @param {number} userid 用户id
+     */
+    function clickSkipFollowedList(userid) {
+      router.push(`/layout/home/followedList/${userid}`);
+    }
+    /**
+     * 点击跳转粉丝列表详情
+     * @param {number} userid 用户id
+     */
+    function clickSkipFansList(userid) {
+      router.push(`/layout/home/fansList/${userid}`);
+    }
+    /**
      * 点击切换数据展示
      * @param {number} type 类型code
      */
@@ -435,9 +460,7 @@ export default defineComponent({
         });
       }
     }
-    getUserDetails(route.params.userId);
-    getUserSongSheetDetails(route.params.userId, 100, 1);
-    getUserPlayRecords(route.params.userId, user_r_played_type.value);
+
     return {
       isPower,
       user_info,
@@ -453,6 +476,8 @@ export default defineComponent({
       clickSwitchData_type,
       clickPlayIcon_playMusic,
       clickPlus_plusMusic,
+      clickSkipFollowedList,
+      clickSkipFansList,
       Plus,
       Check,
       EditPen,
@@ -553,6 +578,10 @@ export default defineComponent({
               font-size: 18px;
             }
           }
+          cursor: pointer;
+          &:hover {
+            color: #409eff;
+          }
         }
       }
       .info_footer_details {
@@ -572,14 +601,6 @@ export default defineComponent({
       border-bottom: 3px solid #409eff;
       display: flex;
       justify-content: space-between;
-      > h2 {
-        > span {
-          margin-left: 5px;
-          color: #737373;
-          font-size: 14px;
-          font-weight: 500;
-        }
-      }
       .select_data {
         display: flex;
         align-items: center;

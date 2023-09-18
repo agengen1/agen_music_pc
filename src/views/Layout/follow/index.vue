@@ -255,12 +255,18 @@
               <span>动态</span>
             </p>
             <el-divider direction="vertical" />
-            <p class="followed">
+            <p
+              class="followed"
+              @click="clickSkipFollowedList(user_info.profile.userId)"
+            >
               <span>{{ user_info.profile.follows }}</span>
               <span>关注</span>
             </p>
             <el-divider direction="vertical" />
-            <p class="fans">
+            <p
+              class="fans"
+              @click="clickSkipFansList(user_info.profile.userId)"
+            >
               <span>{{ user_info.profile.followeds }}</span>
               <span>粉丝</span>
             </p>
@@ -484,6 +490,20 @@ export default defineComponent({
       }
     }
     /**
+     * 点击跳转关注列表详情
+     * @param {number} userid 用户id
+     */
+    function clickSkipFollowedList(userid) {
+      router.push(`/layout/home/followedList/${userid}`);
+    }
+    /**
+     * 点击跳转粉丝列表详情
+     * @param {number} userid 用户id
+     */
+    function clickSkipFansList(userid) {
+      router.push(`/layout/home/fansList/${userid}`);
+    }
+    /**
      * 点击跳转歌手详情页面
      * @param {string |number} singerId
      */
@@ -588,6 +608,8 @@ export default defineComponent({
       zoomFollowImg,
       FollowWordHighlight,
       clickAct_SingerNameSkpi_dom,
+      clickSkipFollowedList,
+      clickSkipFansList,
       clickMvSkipDetails,
       clickPre_data,
       clickNext_data,

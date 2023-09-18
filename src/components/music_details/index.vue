@@ -123,6 +123,7 @@ export default defineComponent({
       el_desc_content.style.height = desc_height.value + "px";
       el_button_text.value = "展开";
     }
+
     /**
      * 点击跳转用户详情页面
      * @param {string | number} id 用户id
