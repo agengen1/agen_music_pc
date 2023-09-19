@@ -40,7 +40,7 @@
             <!-- 上下边距 -->
             <div class="marginTB">
               <!-- 是否vip  试听30s -->
-              <div class="isAudition" v-if="music_urlInfo.fee === 1">
+              <div class="isAudition" v-show="music_urlInfo.fee === 1">
                 <i class="iconfont icon-zhuanshukefu"></i>
                 <p>VIP歌曲,试听30s</p>
               </div>
@@ -279,6 +279,10 @@ export default defineComponent({
      * 播放处理函数
      */
     function play_handler() {
+      if (music_urlInfo.value && music_urlInfo.value.fee === 0) {
+        info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
+        return;
+      }
       store.commit("player/SETPLAYMUSIC_STATUS", true);
       nextTick(() => {
         audio_el.play();
@@ -407,6 +411,10 @@ export default defineComponent({
         music_urlInfo.value = markRaw(res.data[0]);
         if (res.data[0].fee === 1) {
           info_prompt("提示", "<i style='color:red;'>VIP歌曲,试听30s</i>");
+        } else if (res.data[0].fee === 0) {
+          info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
+          // play_nextSong_music(); 不能播放自动播放下一首，可能导致死循环 -- 直接暂停歌曲
+          pause_handler();
         }
       }
     }

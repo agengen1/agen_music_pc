@@ -2,7 +2,17 @@
   <div class="musicList">
     <div class="SongSheet_musiclist">
       <h4>
-        <span>歌曲列表({{ music_total_P }})</span>
+        <span
+          >歌曲列表({{ music_total_P }})
+          <el-button
+            v-if="route.name != 'songSheetDetail'"
+            type="primary"
+            size="small"
+            :icon="VideoPlay"
+            @click="clickPlaySongsMusic_all(music_list_P)"
+            >播放全部</el-button
+          ></span
+        >
         <span v-if="play_total_P > 0"
           >播放:
           <span>
@@ -80,8 +90,9 @@ import {
   SearchTextHighlight,
 } from "@/assets/public";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ElMessage } from "element-plus";
+import { VideoPlay } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "musicList",
@@ -113,6 +124,7 @@ export default defineComponent({
   },
   setup(props) {
     let router = useRouter();
+    let route = useRoute();
     let store = useStore();
     let music_list_P = ref([]);
     let music_total_P = ref(0);
@@ -195,6 +207,28 @@ export default defineComponent({
       };
       store.commit("player/ADDPLAYMUSIC_LIST", obj);
     }
+    /**
+     * 点击播放全部
+     * @param {array}  songsList 音乐单曲数组
+     */
+    function clickPlaySongsMusic_all(songsList) {
+      let arr_songs = [];
+      songsList.forEach((el) => {
+        arr_songs.push({
+          name: el.name,
+          id: el.id,
+          playTime: el.dt,
+          imgUrl: el.al.picUrl,
+          album: {
+            id: el.al.id,
+            name: el.al.name,
+            imgUrl: el.al.picUrl,
+          },
+          artists: el.ar,
+        });
+      });
+      store.commit("player/ADDPLAYMUSIC_LIST", arr_songs);
+    }
 
     return {
       music_list_P,
@@ -208,6 +242,9 @@ export default defineComponent({
       SearchTextHighlight,
       isSearchUse_P,
       key,
+      VideoPlay,
+      route,
+      clickPlaySongsMusic_all,
     };
   },
 });

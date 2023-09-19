@@ -26,7 +26,13 @@
           <span>{{ stamp_time(SongSheet_details.createTime) }} 创建</span>
         </div>
         <div class="SongSheet_other">
-          <el-button type="primary" size="large" :icon="icon.VideoPlay"
+          <el-button
+            type="primary"
+            size="large"
+            :icon="icon.VideoPlay"
+            @click="
+              clickPlaySongsMusic_all(SongSheet_details.SongSheet_allMusic)
+            "
             >播放全部</el-button
           >
           <el-button type="info" size="large" plain :icon="icon.Share"
@@ -81,7 +87,7 @@ import {
 import { Share, Comment, VideoPlay } from "@element-plus/icons-vue";
 import { stamp_time } from "@/assets/public";
 import { ElMessage } from "element-plus";
-
+import { useStore } from "vuex";
 export default defineComponent({
   name: "musicDetails",
   components: {
@@ -90,12 +96,36 @@ export default defineComponent({
   setup() {
     let route = useRoute();
     let router = useRouter();
+    let store = useStore();
+
     let SongSheet_details = ref({});
     let data_loading = ref(true);
     let desc_height = ref(50); //desc允许展示高度
     let desc_el_height = ref(0); //元素正常显示高度
     let el_desc_content = null; //展示desc元素
     let el_button_text = ref("展开"); //按钮展示打开状态
+    /**
+     * 点击播放全部
+     * @param {array}  songsList 音乐单曲数组
+     */
+    function clickPlaySongsMusic_all(songsList) {
+      let arr_songs = [];
+      songsList.forEach((el) => {
+        arr_songs.push({
+          name: el.name,
+          id: el.id,
+          playTime: el.dt,
+          imgUrl: el.al.picUrl,
+          album: {
+            id: el.al.id,
+            name: el.al.name,
+            imgUrl: el.al.picUrl,
+          },
+          artists: el.ar,
+        });
+      });
+      store.commit("player/ADDPLAYMUSIC_LIST", arr_songs);
+    }
     /**
      * 点击展开
      */
@@ -192,6 +222,7 @@ export default defineComponent({
       el_button_text,
       clickPackUpText,
       clickExpandText,
+      clickPlaySongsMusic_all,
       desc_height_str: desc_height.value + "px",
       icon: {
         Share,

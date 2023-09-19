@@ -3,10 +3,10 @@
   <!-- <el-backtop :right="100" :bottom="100" />  element-puls组件返回顶部-->
   <van-back-top :offset="300" bottom="20vh" right="3%" />
   <!-- 播放器组件 -->
-  <!-- <PLAYCONTROL
+  <PLAYCONTROL
     v-if="playMusic_list.length > 0"
     v-show="player_control_flag"
-  ></PLAYCONTROL> -->
+  ></PLAYCONTROL>
   <!-- 登录页面 -->
   <el-dialog v-model="login_openState" destroy-on-close title="登录">
     <LOGIN></LOGIN>

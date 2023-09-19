@@ -44,7 +44,23 @@ export default {
     },
     ADDPLAYMUSIC_LIST(state, any_data_list) {
       // 添加并播放音乐
-      if (typeof any_data_list == "object") {
+      if (Array.isArray(any_data_list)) {
+        // 数组处理
+        let arr = [];
+        state.playMusic_list.forEach((e) => {
+          if (
+            !any_data_list.some((ee) => {
+              return e.id == ee.id;
+            })
+          ) {
+            arr.push(e);
+          }
+        });
+        state.playMusic_list = [...arr, ...any_data_list];
+        state.playMusic_index =
+          state.playMusic_list.length - any_data_list.length;
+        state.playMusic_status = true;
+      } else {
         // 对象处理
         let new_arr = state.playMusic_list.filter((e) => {
           return e.id !== any_data_list.id;
@@ -53,9 +69,6 @@ export default {
         state.playMusic_list = new_arr;
         state.playMusic_index = state.playMusic_list.length - 1;
         state.playMusic_status = true;
-      } else {
-        // 数组处理
-        console.log("array", any_data_list);
       }
     },
     ADDPLAYMUSIC_LIST_NOTPLAY(state, any_data_obj) {
