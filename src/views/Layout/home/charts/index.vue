@@ -1,5 +1,10 @@
 <template>
-  <div class="charts">
+  <Loading
+    title="加载中...."
+    textColor="#409eff"
+    v-if="ranking_arr.length <= 0"
+  ></Loading>
+  <div class="charts" v-else>
     <nav class="charts_nav">
       <div
         class="charts_one"

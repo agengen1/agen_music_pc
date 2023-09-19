@@ -12,7 +12,7 @@
     >
       <el-menu-item index="/layout/home/recommend">推荐</el-menu-item>
       <el-menu-item index="/layout/home/charts">排行榜</el-menu-item>
-      <el-menu-item index="/layout/home/songSheet">歌单</el-menu-item>
+      <el-menu-item index="/layout/home/songSheets">歌单</el-menu-item>
       <el-menu-item index="/layout/home/singers">歌手</el-menu-item>
       <el-menu-item index="/layout/home/mvs">MV</el-menu-item>
     </el-menu>
@@ -33,8 +33,8 @@ export default defineComponent({
         return "/layout/home/recommend";
       } else if (route.path.indexOf("/layout/home/charts") === 0) {
         return "/layout/home/charts";
-      } else if (route.path.indexOf("/layout/home/songSheet") === 0) {
-        return "/layout/home/songSheet";
+      } else if (route.path.indexOf("/layout/home/songSheets") === 0) {
+        return "/layout/home/songSheets";
       } else if (route.path.indexOf("/layout/home/singers") === 0) {
         return "/layout/home/singers";
       } else if (route.path.indexOf("/layout/home/mvs") === 0) {

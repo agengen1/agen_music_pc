@@ -66,8 +66,8 @@ const routes = [
             ],
           },
           {
-            path: "songSheet",
-            name: "songSheet",
+            path: "songSheets",
+            name: "songSheets",
             meta: {
               title: "歌单",
             },

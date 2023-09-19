@@ -1,5 +1,13 @@
 <template>
-  <div class="userMusic">
+  <Loading
+    title="加载中...."
+    textColor="#409eff"
+    v-if="
+      userSongSheetType.MyCreatedSongSheet.length <= 0 &&
+      userSongSheetType.MyCollectSongSheet.length <= 0
+    "
+  ></Loading>
+  <div class="userMusic" v-else>
     <div class="userMusic_left">
       <el-menu :default-active="defaultSelete">
         <el-menu-item class="CreateSSheet" @click="clickCreateUserSongSheet">

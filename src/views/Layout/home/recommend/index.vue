@@ -12,11 +12,16 @@
         <div class="songsheet">
           <h2>
             <span>歌单推荐</span
-            ><span
+            ><span @click="click_skpi_SongSheets()"
               >更多<el-icon><ArrowRightBold /> </el-icon
             ></span>
           </h2>
-          <div class="songsheet_content">
+          <Loading
+            title="加载中...."
+            textColor="#409eff"
+            v-if="songSheet_arr.length <= 0"
+          ></Loading>
+          <div class="songsheet_content" v-else>
             <el-carousel height="440px" direction="vertical" :interval="5000">
               <el-carousel-item>
                 <div class="box">
@@ -24,11 +29,11 @@
                     class="one_songsheet"
                     v-for="item in songSheet_arr[0]"
                     :key="item.id"
-                    @click="clickSongSheet_one(item)"
+                    @click="clickSongSheetNameSkip(item.id)"
                   >
                     <div>
                       <img
-                        v-lazy="item.picUrl + '?param=550y550'"
+                        v-lazy="item.picUrl + '?param=200y200'"
                         :alt="item.name"
                       />
                       <p><van-icon name="play" /></p>
@@ -43,11 +48,11 @@
                     class="one_songsheet"
                     v-for="item in songSheet_arr[1]"
                     :key="item.id"
-                    @click="clickSongSheet_one(item)"
+                    @click="clickSongSheetNameSkip(item.id)"
                   >
                     <div>
                       <img
-                        v-lazy="item.picUrl + '?param=550y550'"
+                        v-lazy="item.picUrl + '?param=200y200'"
                         :alt="item.name"
                       />
                       <p><van-icon name="play" /></p>
@@ -62,11 +67,11 @@
                     class="one_songsheet"
                     v-for="item in songSheet_arr[2]"
                     :key="item.id"
-                    @click="clickSongSheet_one(item)"
+                    @click="clickSongSheetNameSkip(item.id)"
                   >
                     <div>
                       <img
-                        v-lazy="item.picUrl + '?param=550y550'"
+                        v-lazy="item.picUrl + '?param=200y200'"
                         :alt="item.name"
                       />
                       <p><van-icon name="play" /></p>
@@ -80,11 +85,13 @@
         </div>
         <div class="music">
           <h2>
-            <span>音乐推荐</span
-            ><span
-              >更多<el-icon><ArrowRightBold /> </el-icon
-            ></span>
+            <span>音乐推荐</span>
           </h2>
+          <Loading
+            title="加载中...."
+            textColor="#409eff"
+            v-if="music_arr.length <= 0"
+          ></Loading>
           <div class="music_content">
             <div
               class="music_one"
@@ -115,11 +122,16 @@
         <div class="charts">
           <h2>
             <span>排行榜</span>
-            <span
+            <span @click="click_skpi_charts()"
               >更多<el-icon><ArrowRightBold /> </el-icon
             ></span>
           </h2>
-          <div class="charts_content">
+          <Loading
+            title="加载中...."
+            textColor="#409eff"
+            v-if="ranking_arr_three.length <= 0"
+          ></Loading>
+          <div class="charts_content" v-else>
             <div
               class="charts_one"
               v-for="item in ranking_arr_three"
@@ -174,11 +186,16 @@
         <div class="singer">
           <h2>
             <span>热门歌手</span
-            ><span
+            ><span @click="click_skpi_Singers()"
               >更多<el-icon><ArrowRightBold /> </el-icon
             ></span>
           </h2>
-          <div class="singer_content">
+          <Loading
+            title="加载中...."
+            textColor="#409eff"
+            v-if="singer_arr.length <= 0"
+          ></Loading>
+          <div class="singer_content" v-else>
             <div
               class="singer_one"
               v-for="item in singer_arr"
@@ -249,15 +266,30 @@ export default defineComponent({
     let ranking_arr_three = reactive([]);
     let router = useRouter();
     let store = useStore();
-
     /**
-     * clickSongSheet_one
-     * @param {String} SongSheetID 歌单ID
-     * 功能：点击跳转，通过传递的参数跳转到歌单详情页
+     * 点击跳转歌单页
      */
-    function clickSongSheet_one(SongSheetID) {
-      console.log(SongSheetID);
-      // 跳转歌单详情页 TODO:
+    function click_skpi_SongSheets() {
+      router.push("/layout/home/songSheets");
+    }
+    /**
+     * 点击跳转排行榜
+     */
+    function click_skpi_charts() {
+      router.push("/layout/home/charts");
+    }
+    /**
+     * 点击跳转歌手页
+     */
+    function click_skpi_Singers() {
+      router.push("/layout/home/singers");
+    }
+    /**
+     * 点击跳转歌单详情页
+     * @param {string|number} id 歌单id
+     */
+    function clickSongSheetNameSkip(id) {
+      router.push(`/layout/home/songSheetDetail/${id}`);
     }
     /**
      * clickSkipSongDetails
@@ -395,7 +427,7 @@ export default defineComponent({
       ranking_arr_three,
       isLogin,
       loginUserInfo,
-      clickSongSheet_one,
+      clickSongSheetNameSkip,
       clickLogin,
       clickSkipSongDetails,
       clickSinger_one,
@@ -404,6 +436,9 @@ export default defineComponent({
       computeMusicTimeDuration,
       computeSingerAs,
       playCountTransform,
+      click_skpi_Singers,
+      click_skpi_charts,
+      click_skpi_SongSheets,
     };
   },
 });
