@@ -229,7 +229,7 @@
           >页
         </p>
         <el-button type="primary" :loading="follow_flag" @click="clickNext_data"
-          >下一页<el-icon class="el-icon--right"><ArrowRightBold /></el-icon
+          >下一页<el-icon><ArrowRightBold /></el-icon
         ></el-button>
       </div>
     </div>

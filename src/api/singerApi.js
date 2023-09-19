@@ -1,6 +1,31 @@
 import axios from "@/utils/request";
 
 /**
+ * 获取歌手分类列表
+ * @param {number} type 取值:
+ *                    -1:全部
+ *                    1:男歌手
+ *                    2:女歌手
+ *                    3:乐队
+ * @param {number} area 取值:
+ *                    -1:全部
+ *                    7华语
+ *                    96欧美
+ *                    8:日本
+ *                    16韩国
+ *                    0:其他
+ * @param {number} limit : 返回数量 , 默认为 30
+ * @param {number} offset : 偏移数量，用于分页 , 如 : 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认为 0
+ */
+export const getSingerClass_typeapi = (type, area, limit, offset) => {
+  return axios.get(
+    `/artist/list?type=${type}&area=${area}&limit=${limit}&offset=${
+      (offset - 1) * limit
+    }`
+  );
+};
+
+/**
  * 歌手详情获取
  * @param {String | number} id 歌手id
  */

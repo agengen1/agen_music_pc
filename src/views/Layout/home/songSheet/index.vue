@@ -65,6 +65,7 @@
           :current-page="pagNo"
           @current-change="handlerCurrentChange($event)"
           :disabled="songSheet_loading_flag"
+          hide-on-single-page
         />
       </div>
     </div>
@@ -96,7 +97,7 @@ export default defineComponent({
     let selectTag = ref("全部"); //选中歌单类型 默认全部
 
     let nowSongSheetlist = ref([]); //当前歌单列表数据
-    let SongSheetTotal = ref(1000); //当前歌单共有歌单数量
+    let SongSheetTotal = ref(0); //当前歌单共有歌单数量
     let pagCount = ref(30); //每一页多少条数据(歌单) 默认30
     let pagNo = ref(1); //当前第几页数据
     /**
