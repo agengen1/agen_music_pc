@@ -5,7 +5,7 @@
         <span
           >歌曲列表({{ music_total_P }})
           <el-button
-            v-if="route.name != 'songSheetDetail'"
+            v-if="!['songSheetDetail', 'charts_details'].includes(route.name)"
             type="primary"
             size="small"
             :icon="VideoPlay"
@@ -185,14 +185,6 @@ export default defineComponent({
      * 功能：点击播放icon,播放音乐——添加到音乐播放列表
      */
     function clickPlayIcon_playMusic(music_data) {
-      // TODO:
-      ElMessage.closeAll();
-      if (music_data.fee === 0) {
-        return ElMessage({
-          message: "此歌曲暂无版权！",
-          type: "warning",
-        });
-      }
       let obj = {
         name: music_data.name,
         id: music_data.id,

@@ -362,14 +362,6 @@ export default defineComponent({
      * 功能：点击播放icon,播放音乐——添加到音乐播放列表
      */
     function clickPlayIcon_playMusic(music_data) {
-      // TODO:
-      ElMessage.closeAll();
-      if (music_data.fee === 0) {
-        return ElMessage({
-          message: "此歌曲暂无版权！",
-          type: "warning",
-        });
-      }
       let obj = {
         name: music_data.name,
         id: music_data.id,

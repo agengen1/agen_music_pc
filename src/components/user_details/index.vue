@@ -327,14 +327,6 @@ export default defineComponent({
      * 功能：点击播放icon,播放音乐——添加到音乐播放列表
      */
     function clickPlayIcon_playMusic(music_data) {
-      // TODO:
-      ElMessage.closeAll();
-      if (music_data.fee === 0) {
-        return ElMessage({
-          message: "此歌曲暂无版权！",
-          type: "warning",
-        });
-      }
       let obj = {
         name: music_data.name,
         id: music_data.id,
@@ -355,14 +347,6 @@ export default defineComponent({
      * 功能：点击添加音乐列表,不播放音乐——添加到音乐播放列表
      */
     function clickPlus_plusMusic(music_data) {
-      // TODO:
-      ElMessage.closeAll();
-      if (music_data.fee === 0) {
-        return ElMessage({
-          message: "此歌曲暂无版权！",
-          type: "warning",
-        });
-      }
       let obj = {
         name: music_data.name,
         id: music_data.id,
@@ -451,7 +435,7 @@ export default defineComponent({
         isPower.value = false;
         ElMessage({
           type: "warning",
-          message: "暂无访问权限！",
+          message: "播放记录，暂无访问权限！",
         });
       }
     }

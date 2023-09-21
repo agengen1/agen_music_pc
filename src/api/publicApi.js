@@ -5,8 +5,7 @@ import axios from "@/utils/request";
  * @param {number} id 歌曲id
  */
 export const getMusic_isUsable_api = (id) => {
-  let now = Date.now();
-  return axios.get(`/check/music?id=${id}&timestamp=${now}`);
+  return axios.get(`/check/music?id=${id}&timestamp=${Date.now()}`);
 };
 
 /**

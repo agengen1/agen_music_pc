@@ -114,7 +114,11 @@
             <van-icon name="comment-o" />
           </p>
           <p title="播放记录">
-            <van-icon name="bars" :badge="playMusic_list.length" />
+            <van-icon
+              name="bars"
+              :badge="playMusic_list.length"
+              @click="clickOpen_playMusic_list()"
+            />
           </p>
           <div class="volume">
             <i
@@ -146,7 +150,7 @@ import {
   watch,
 } from "vue";
 import { Unlock, Lock, Download } from "@element-plus/icons-vue";
-import { getMusic_url_api } from "@/api/publicApi";
+import { getMusic_url_api, getMusic_isUsable_api } from "@/api/publicApi";
 import { computeMusicTimeDuration } from "@/assets/public";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
@@ -163,6 +167,7 @@ export default defineComponent({
   },
   setup() {
     let islocked = ref(false); //锁定就不会自动隐藏  true-表示锁定   false-不锁定
+    let playlist_open_flag = ref(false); //播放列表打开状态 -- true - 打开 ， false -隐藏
     let playControl_el = null; //鼠标移入移出操作元素
     let audio_el = null; //播放器操作元素
     let store = useStore(); //vuex 中的公共数据
@@ -279,7 +284,11 @@ export default defineComponent({
      * 播放处理函数
      */
     function play_handler() {
-      if (music_urlInfo.value && music_urlInfo.value.fee === 0) {
+      if (
+        music_urlInfo.value &&
+        music_urlInfo.value.fee === 0 &&
+        music_urlInfo.value.is_copyright === false
+      ) {
         info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
         return;
       }
@@ -335,6 +344,18 @@ export default defineComponent({
         index = 0;
       }
       store.commit("player/SETPLAYMUSIC_INDEX", index);
+    }
+    /**
+     * 点击打开音乐播放列表
+     */
+    function clickOpen_playMusic_list() {
+      if (playlist_open_flag.value) {
+        islocked.value = false;
+        playlist_open_flag.value = false;
+      } else {
+        islocked.value = true;
+        playlist_open_flag.value = true;
+      }
     }
     /**
      * @param {number} id
@@ -402,6 +423,14 @@ export default defineComponent({
       });
     }
     /**
+     * 歌曲是否可用获取
+     * @param {number} id 歌曲id
+     */
+    async function getMusic_isUsable(id) {
+      const { data: res } = await getMusic_isUsable_api(id);
+      return Promise.resolve(res);
+    }
+    /**
      * 获取歌曲url详情
      * @param {string} id 歌曲id
      */
@@ -412,12 +441,16 @@ export default defineComponent({
         if (res.data[0].fee === 1) {
           info_prompt("提示", "<i style='color:red;'>VIP歌曲,试听30s</i>");
         } else if (res.data[0].fee === 0) {
-          info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
-          // play_nextSong_music(); 不能播放自动播放下一首，可能导致死循环 -- 直接暂停歌曲
-          pause_handler();
+          const res_u = await getMusic_isUsable(res.data[0].id);
+          if (res_u && res_u.success === false) {
+            info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
+            music_urlInfo.value["is_copyright"] = false; //标记此歌曲为无版权 fasle - 没有版权
+            pause_handler();
+          }
         }
       }
     }
+
     /**
      * 喜欢音乐/取消喜欢音乐
      * @param { String | Number} id 歌曲id
@@ -478,6 +511,8 @@ export default defineComponent({
       clickMuiscName_Skpi_doc,
       isLikeMusic,
       clickSetLikeMusic,
+      clickOpen_playMusic_list,
+      playlist_open_flag,
     };
   },
 });
