@@ -3,14 +3,18 @@
     class="playControl"
     @mouseenter="playControl_MouseIn"
     @mouseleave="playControl_MouseOut"
+    data-playListing="is_playlist"
   >
-    <div class="playControl_box">
+    <div class="playControl_box" data-playListing="is_playlist">
       <!-- 是否锁定控制 -->
+
       <div class="lock_control">
         <el-icon @click="islocked = !islocked" v-if="islocked"
-          ><Lock
+          ><Lock data-playListing="is_playlist"
         /></el-icon>
-        <el-icon @click="islocked = !islocked" v-else><Unlock /></el-icon>
+        <el-icon @click="islocked = !islocked" v-else
+          ><Unlock data-playListing="is_playlist"
+        /></el-icon>
       </div>
       <div class="content margin_layout">
         <div class="left">
@@ -110,12 +114,10 @@
           <p title="下载歌曲">
             <el-icon><Download /></el-icon>
           </p>
-          <p>
-            <van-icon name="comment-o" />
-          </p>
           <p title="播放记录">
             <van-icon
               name="bars"
+              data-playListing="is_playlist"
               :badge="playMusic_list.length"
               @click="clickOpen_playMusic_list()"
             />
@@ -135,6 +137,67 @@
           </div>
         </div>
       </div>
+      <!-- 播放列表 -->
+      <Transition name="playListing" mode="out-in" appear>
+        <div
+          class="play_listing"
+          v-show="playlist_open_flag"
+          data-playListing="is_playlist"
+        >
+          <h3>
+            <span>播放列表({{ playMusic_list.length }})</span>
+            <p>
+              <span title="清空播放列表"
+                ><van-icon
+                  name="delete-o"
+                  @click="clickPlayMusic_delete_all_music"
+              /></span>
+              <span title="关闭" @click="click_close_playlisting"
+                ><van-icon name="cross"
+              /></span>
+            </p>
+          </h3>
+          <ul>
+            <li
+              v-for="(item, index) in playMusic_list"
+              :key="item.id"
+              :class="{ odd_backColor: index % 2 != 0 }"
+              data-playListing="is_playlist"
+            >
+              <div class="play_flag" data-playListing="is_playlist">
+                <el-icon v-show="index === playMusic_index"><Flag /></el-icon>
+              </div>
+              <div
+                class="play_name text_exceed_hide_one"
+                :class="{ isplay_music: index === playMusic_index }"
+                @click="clickPlayMusic_music_name(index)"
+                data-playListing="is_playlist"
+                :title="item.name"
+              >
+                {{ item.name }}
+              </div>
+              <div class="play_handler_button">
+                <span title="收藏"
+                  ><el-icon data-playListing="is_playlist"
+                    ><FolderAdd /></el-icon
+                ></span>
+                <span title="删除"
+                  ><van-icon
+                    name="delete-o"
+                    @click="clickPlayMusic_delete_music(item.id)"
+                    data-playListing="is_playlist"
+                /></span>
+              </div>
+              <div class="play_artists text_exceed_hide_one">
+                {{ computeSingerAs(item.artists) }}
+              </div>
+              <div class="play_time text_exceed_hide_one">
+                {{ computeMusicTimeDuration(item.playTime) }}
+              </div>
+            </li>
+          </ul>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -146,12 +209,19 @@ import {
   markRaw,
   nextTick,
   onMounted,
+  onUnmounted,
   ref,
   watch,
 } from "vue";
-import { Unlock, Lock, Download } from "@element-plus/icons-vue";
+import {
+  Unlock,
+  Lock,
+  Download,
+  Flag,
+  FolderAdd,
+} from "@element-plus/icons-vue";
 import { getMusic_url_api, getMusic_isUsable_api } from "@/api/publicApi";
-import { computeMusicTimeDuration } from "@/assets/public";
+import { computeMusicTimeDuration, computeSingerAs } from "@/assets/public";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { ElNotification, ElMessage } from "element-plus";
@@ -164,11 +234,14 @@ export default defineComponent({
     Unlock,
     Lock,
     Download,
+    Flag,
+    FolderAdd,
   },
   setup() {
     let islocked = ref(false); //锁定就不会自动隐藏  true-表示锁定   false-不锁定
     let playlist_open_flag = ref(false); //播放列表打开状态 -- true - 打开 ， false -隐藏
     let playControl_el = null; //鼠标移入移出操作元素
+    let playListing_el = ref(null); //播放列表元素
     let audio_el = null; //播放器操作元素
     let store = useStore(); //vuex 中的公共数据
     let router = useRouter();
@@ -191,6 +264,9 @@ export default defineComponent({
     let playMusic_index = computed(() => {
       return store.state.player.playMusic_index;
     });
+    let playMusic_id = computed(() => {
+      return store.state.player.playMusic_id;
+    });
     let playMusic_status = computed(() => {
       return store.state.player.playMusic_status;
     });
@@ -203,9 +279,11 @@ export default defineComponent({
       },
       set(val_number) {
         //以下代码用来实现拖动进度条播放音乐
-        audio_el.currentTime = val_number / 1000;
-        store.commit("player/SETPLAYMUSIC_TIME", val_number);
-        play_handler();
+        if (audio_el && val_number) {
+          audio_el.currentTime = val_number / 1000;
+          store.commit("player/SETPLAYMUSIC_TIME", val_number);
+          play_handler();
+        }
       },
     });
     let playMusic_volume = computed({
@@ -222,8 +300,20 @@ export default defineComponent({
     onMounted(() => {
       playControl_el = document.querySelector(".playControl");
       audio_el = document.querySelector("audio");
+      playListing_el.value = document.querySelector(".play_listing");
+      window.addEventListener("click", watch_playListing_out);
     });
-    watch(playMusic_index, () => {
+    onUnmounted(() => {
+      window.removeEventListener("click", watch_playListing_out);
+    });
+    watch(
+      playMusic_index,
+      (newVal) => {
+        store.commit("player/SETPLAYMUSIC_ID", playMusic_list.value[newVal].id);
+      },
+      { immediate: true }
+    );
+    watch(playMusic_id, () => {
       store.commit("player/SETPLAYMUSIC_STATUS", false);
       pause_handler();
       store.commit("player/SETPLAYMUSIC_TIME", 0);
@@ -250,6 +340,27 @@ export default defineComponent({
       }
     );
     /**
+     * 监听点击外部元素
+     */
+    function watch_playListing_out(e) {
+      if (playlist_open_flag.value) {
+        e.preventDefault();
+        if (
+          e?.target?.dataset?.playlisting == "is_playlist" ||
+          e?.target?.offsetParent?.dataset?.playlisting == "is_playlist" ||
+          e?.target?.nodeName == "svg"
+        ) {
+        } else {
+          if (islocked.value) {
+            playlist_open_flag.value = false;
+          } else {
+            playlist_open_flag.value = false;
+            playControl_el.style.bottom = "-90px";
+          }
+        }
+      }
+    }
+    /**
      * playControl_MouseIn
      * 功能：鼠标移入触发事件
      */
@@ -268,6 +379,7 @@ export default defineComponent({
         return;
       }
       playControl_el.style.bottom = "-90px";
+      playlist_open_flag.value = false;
     }
     /**
      * 功能:点击播放按钮 -播放或暂停音乐
@@ -340,6 +452,12 @@ export default defineComponent({
     function play_nextSong_music() {
       let index = playMusic_index.value;
       index += 1;
+      // 判断是否播放列表只有一首音乐
+      if (playMusic_list.value.length === 1) {
+        index = 0;
+        play_handler();
+        return;
+      }
       if (index >= playMusic_list.value.length) {
         index = 0;
       }
@@ -350,10 +468,8 @@ export default defineComponent({
      */
     function clickOpen_playMusic_list() {
       if (playlist_open_flag.value) {
-        islocked.value = false;
         playlist_open_flag.value = false;
       } else {
-        islocked.value = true;
         playlist_open_flag.value = true;
       }
     }
@@ -365,8 +481,6 @@ export default defineComponent({
       if (route.name === "songDetails") {
         if (route.params.songId != id) {
           router.replace("/layout/home/songDetails/" + id);
-        } else {
-          console.log("不用跳转");
         }
       } else {
         router.push("/layout/home/songDetails/" + id);
@@ -423,6 +537,48 @@ export default defineComponent({
       });
     }
     /**
+     * 点击关闭播放列表
+     */
+    function click_close_playlisting() {
+      if (islocked.value) {
+        playlist_open_flag.value = false;
+      } else {
+        playlist_open_flag.value = false;
+        playControl_el.style.bottom = "-90px";
+      }
+    }
+    /**
+     * 点击播放列表 music_name 切换音乐
+     * @param {number} index 音乐下标
+     */
+    function clickPlayMusic_music_name(index) {
+      store.commit("player/SETPLAYMUSIC_INDEX", index);
+    }
+    /**
+     * 点击播放列表全部删除icon 删除全部音乐
+     */
+    function clickPlayMusic_delete_all_music() {
+      PackageMessageBox("确定删除全部音乐?", "删除提示", {
+        type: "warning",
+        draggable: true,
+      })
+        .then(() => {
+          // 确定删除
+          pause_handler();
+          store.commit("player/DELETEPLAYMUSIC_LIST_ALLMUSIC");
+        })
+        .catch(() => {
+          //取消，什么都不用干
+        });
+    }
+    /**
+     * 点击播放列表删除icon 删除音乐
+     * @param {number} id 音乐id
+     */
+    function clickPlayMusic_delete_music(id) {
+      store.commit("player/DELETEPLAYMUSIC_LIST_MUSIC", id);
+    }
+    /**
      * 歌曲是否可用获取
      * @param {number} id 歌曲id
      */
@@ -450,7 +606,6 @@ export default defineComponent({
         }
       }
     }
-
     /**
      * 喜欢音乐/取消喜欢音乐
      * @param { String | Number} id 歌曲id
@@ -513,12 +668,31 @@ export default defineComponent({
       clickSetLikeMusic,
       clickOpen_playMusic_list,
       playlist_open_flag,
+      playListing_el,
+      playMusic_index,
+      computeSingerAs,
+      clickPlayMusic_music_name,
+      clickPlayMusic_delete_music,
+      clickPlayMusic_delete_all_music,
+      click_close_playlisting,
     };
   },
 });
 </script>
 
 <style lang="less" scoped>
+.playListing-enter-active,
+.playListing-leave-active {
+  transition: transform 0.3s;
+}
+.playListing-enter-from,
+.playListing-leave-to {
+  transform: translateY(45vh+90px);
+}
+.playListing-enter-to,
+.playListing-leave-from {
+  transform: translateY(0);
+}
 .playControl {
   position: fixed;
   left: 0;
@@ -678,9 +852,13 @@ export default defineComponent({
         p {
           flex: 1;
           font-size: 22px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         .volume {
-          flex: 2;
+          margin-left: 20px;
+          flex: 1.5;
           display: flex;
           align-items: center;
           /deep/.el-slider {
@@ -692,6 +870,102 @@ export default defineComponent({
           i {
             margin-right: 15px;
             font-size: 20px;
+          }
+        }
+      }
+    }
+    .play_listing {
+      position: absolute;
+      z-index: -1;
+      right: 8.5vw;
+      bottom: 90px;
+      width: 35vw;
+      height: 45vh;
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+      background-color: #fff;
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+      padding: 10px;
+      h3 {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1.5px solid #eaeaea;
+        padding-bottom: 5px;
+        margin-bottom: 5px;
+        p {
+          span {
+            i {
+              margin-left: 20px;
+              cursor: pointer;
+              font-size: 18px;
+              transition: transform 0.3s ease-in-out;
+            }
+            &:nth-child(1) {
+              &:hover {
+                color: #fe036e;
+              }
+            }
+            &:nth-child(2) {
+              &:hover i {
+                color: #409eff;
+                transform: rotate(180deg);
+              }
+            }
+          }
+        }
+      }
+      ul {
+        background-color: #fff;
+        width: 100%;
+        height: calc(45vh - 27px);
+        overflow: scroll;
+        li {
+          padding: 5px;
+          display: flex;
+          &:hover {
+            background-color: #dedede91;
+          }
+          &:hover .play_handler_button {
+            opacity: 1;
+          }
+          .play_flag {
+            width: 5%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fe036e;
+            font-size: 16px;
+          }
+          .play_name {
+            width: 45%;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 700;
+          }
+          .play_handler_button {
+            opacity: 0;
+            width: 15%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            i {
+              margin: 0 5px;
+              font-size: 16px;
+              cursor: pointer;
+            }
+          }
+          .play_artists {
+            font-size: 12px;
+            width: 20%;
+            color: #6f6f6f;
+          }
+          .play_time {
+            width: 15%;
+            text-align: center;
+          }
+          .isplay_music {
+            color: #fe036e;
           }
         }
       }

@@ -360,10 +360,6 @@ export default defineComponent({
         artists: music_data.ar,
       };
       store.commit("player/ADDPLAYMUSIC_LIST_NOTPLAY", obj);
-      ElMessage({
-        message: "添加音乐播放列表成功",
-        type: "success",
-      });
     }
     /**
      * 点击跳转歌手详情页面

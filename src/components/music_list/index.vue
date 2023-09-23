@@ -5,7 +5,11 @@
         <span
           >歌曲列表({{ music_total_P }})
           <el-button
-            v-if="!['songSheetDetail', 'charts_details'].includes(route.name)"
+            v-if="
+              !['songSheetDetail', 'charts_details', 'musicSongSheet'].includes(
+                route.name
+              )
+            "
             type="primary"
             size="small"
             :icon="VideoPlay"

@@ -208,15 +208,17 @@ const router = createRouter({
 
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
-  user_isLogin = localStorage.getItem("user_isLogin") || "false";
-  //判断是否登录
-  if (user_isLogin === "true") {
-    document.title = "牛牛音乐-(" + to.meta.title + ")";
-    //跳转路由页面滚动到顶部
+  setTimeout(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth", // 平滑滚动效果
     });
+  }, 1);
+
+  user_isLogin = localStorage.getItem("user_isLogin") || "false";
+  //判断是否登录
+  if (user_isLogin === "true") {
+    document.title = "牛牛音乐-(" + to.meta.title + ")";
     next();
   } else {
     if (CheackRouteNameArr.includes(to.name)) {
@@ -232,11 +234,6 @@ router.beforeEach((to, from, next) => {
       }
     } else {
       document.title = "牛牛音乐-(" + to.meta.title + ")";
-      //跳转路由页面滚动到顶部
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth", // 平滑滚动效果
-      });
       next();
     }
   }
