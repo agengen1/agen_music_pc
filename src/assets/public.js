@@ -142,7 +142,6 @@ export function FollowA_userNameHighlight(repObj) {
   if (repArr && repArr.length > 0) {
     for (let i = 0; i < repArr.length; i++) {
       let newSrc = repArr[i].replace(/#/g, ".=+*");
-      console.log(newSrc);
       str = str.replace(
         repArr[i],
         `<a class="A_link_button" data-href="${newSrc}" href="javasrcipt:;"><i class="iconfont icon-lianjie"></i>网页链接</a>`

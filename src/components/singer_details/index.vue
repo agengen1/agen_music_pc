@@ -7,7 +7,7 @@
   ></Loading>
   <div v-else>
     <div class="singerDetails_content">
-      <div class="right">
+      <div class="left">
         <div class="details">
           <div class="backimg">
             <img
@@ -84,7 +84,7 @@
           </van-tabs>
         </div>
       </div>
-      <div class="left">
+      <div class="right">
         <h3>相似歌手</h3>
         <Loading
           v-if="similarSinger_flag"
@@ -112,6 +112,7 @@
             </li>
           </ul>
         </div>
+        <el-empty v-if="similarSinger.length <= 0" description="暂无相似歌手" />
       </div>
     </div>
   </div>
@@ -214,6 +215,60 @@ export default defineComponent({
     transform: scale(1.2);
   }
   .left {
+    padding-left: 20px;
+    width: 75%;
+    .details {
+      display: flex;
+      .backimg {
+        width: 25%;
+        img {
+          width: 90%;
+          object-fit: cover;
+          border-radius: 10px;
+        }
+      }
+      .info {
+        width: 75%;
+        p {
+          margin: 10px 0;
+          font: 500 16px "华文楷书";
+        }
+        .info_name {
+          font: 700 22px "华文楷书";
+        }
+        .info_as {
+        }
+        .info_identify {
+          img {
+            margin-right: 10px;
+            width: 4%;
+            object-fit: cover;
+          }
+          span {
+            font: 500 14px "华文楷书";
+          }
+        }
+        .info_identities {
+          display: flex;
+          > span {
+            span {
+              padding: 3px 6px;
+              margin: 0 10px 0 0;
+              font: 700 14px "华文楷书";
+              background-color: #f0483b;
+              color: #fff;
+              border-radius: 5px;
+            }
+          }
+        }
+        .info_buttons {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  .right {
     width: 25%;
     h3 {
       padding-left: 5px;
@@ -270,59 +325,6 @@ export default defineComponent({
               }
             }
           }
-        }
-      }
-    }
-  }
-  .right {
-    padding-left: 20px;
-    width: 75%;
-    .details {
-      display: flex;
-      .backimg {
-        width: 25%;
-        img {
-          width: 90%;
-          object-fit: cover;
-          border-radius: 10px;
-        }
-      }
-      .info {
-        width: 75%;
-        p {
-          margin: 10px 0;
-          font: 500 16px "华文楷书";
-        }
-        .info_name {
-          font: 700 22px "华文楷书";
-        }
-        .info_as {
-        }
-        .info_identify {
-          img {
-            margin-right: 10px;
-            width: 4%;
-            object-fit: cover;
-          }
-          span {
-            font: 500 14px "华文楷书";
-          }
-        }
-        .info_identities {
-          display: flex;
-          > span {
-            span {
-              padding: 3px 6px;
-              margin: 0 10px 0 0;
-              font: 700 14px "华文楷书";
-              background-color: #f0483b;
-              color: #fff;
-              border-radius: 5px;
-            }
-          }
-        }
-        .info_buttons {
-          margin-top: 20px;
         }
       }
     }
