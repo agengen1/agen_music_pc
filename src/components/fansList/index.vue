@@ -171,7 +171,7 @@ export default defineComponent({
      */
     function click_typeSkipDoc(obj_data) {
       if (obj_data.type == "event") {
-        // router.push(``)
+        router.push(`/layout/home/EventList/${obj_data.uid}`);
       } else if (obj_data.type == "followed") {
         router.push(`/layout/home/followedList/${obj_data.uid}`);
       } else if (obj_data.type == "fans") {

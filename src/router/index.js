@@ -6,9 +6,10 @@ let user_isLogin;
 
 let CheackRouteNameArr = [
   "follow",
-  "songSheetDetail",
   "singerDetails",
-  "userDetails",
+  "followedList",
+  "fansList",
+  "eventList",
 ]; //需要验证的路由名称数组
 
 const routes = [
@@ -155,6 +156,14 @@ const routes = [
               title: "粉丝列表",
             },
             component: () => import("@/components/fansList/index.vue"),
+          },
+          {
+            path: "eventList/:userIdEvent",
+            name: "eventList",
+            meta: {
+              title: "动态列表",
+            },
+            component: () => import("@/components/eventList/index.vue"),
           },
         ],
       },

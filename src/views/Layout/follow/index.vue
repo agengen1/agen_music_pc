@@ -44,7 +44,10 @@
             }}</span>
           </div>
           <div class="user_info_content_bottom">
-            <p class="event">
+            <p
+              class="event"
+              @click="clickSkipEventList(user_info.profile.userId)"
+            >
               <span>{{ user_info.profile.eventCount }}</span>
               <span>动态</span>
             </p>
@@ -162,6 +165,13 @@ export default defineComponent({
       router.push(`/layout/home/fansList/${userid}`);
     }
     /**
+     * 点击跳转动态列表详情
+     * @param {number} userid 用户id
+     */
+    function clickSkipEventList(userid) {
+      router.push(`/layout/home/EventList/${userid}`);
+    }
+    /**
      * 点击跳转歌手详情页面
      * @param {string |number} singerId
      */
@@ -256,7 +266,7 @@ export default defineComponent({
       ArrowLeftBold,
       leftDisabled,
       likeSinger_data,
-
+      clickSkipEventList,
       clickSkipFollowedList,
       clickSkipFansList,
       clickPre_data,

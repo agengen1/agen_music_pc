@@ -122,8 +122,10 @@
 
 <script>
 import { defineComponent, watch, ref } from "vue";
-import { getUserFollowedListapi } from "@/api/userDetailsApi";
-import { getUserDetailsapi } from "@/api/userDetailsApi";
+import {
+  getUserFollowedListapi,
+  getUserDetailsapi,
+} from "@/api/userDetailsApi";
 import { useRouter, useRoute } from "vue-router";
 import { Plus, Check, Female, Male, User } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
@@ -170,7 +172,7 @@ export default defineComponent({
      */
     function click_typeSkipDoc(obj_data) {
       if (obj_data.type == "event") {
-        // router.push(``)
+        router.push(`/layout/home/EventList/${obj_data.uid}`);
       } else if (obj_data.type == "followed") {
         router.push(`/layout/home/followedList/${obj_data.uid}`);
       } else if (obj_data.type == "fans") {

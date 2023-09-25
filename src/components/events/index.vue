@@ -22,9 +22,8 @@
           <span v-if="item.type === 56" class="label_title">分享网页</span>
           <span v-if="item.type === 18" class="label_title">分享单曲</span>
           <span v-if="item.type === 17" class="label_title">分享节目</span>
-          <span v-if="item.type === 21 || item.type === 41" class="label_title"
-            >分享视频</span
-          >
+          <span v-if="item.type === 21" class="label_title">分享MV</span>
+          <span v-if="item.type === 41" class="label_title">分享视频</span>
           <span v-if="item.type === 13" class="label_title">分享歌单</span>
           <span v-if="item.type === 22" class="label_title">转发</span>
         </p>
@@ -48,6 +47,9 @@
             target="_blank"
             >(请前往网易云音乐查看)</a
           >
+        </p>
+        <p v-else-if="item.type === 41" class="body_content">
+          视频功能暂未实现！(^_^)
         </p>
         <p
           v-else
@@ -111,13 +113,21 @@
           <div class="song_R">
             <span
               class="songName"
+              v-if="item.treeJson_data.program.mainSong"
               @click="
                 clickMuiscName_Skpi_doc(item.treeJson_data.program.mainSong.id)
               "
             >
               {{ item.treeJson_data.program.name }}
             </span>
-            <span class="singerName">
+            <span
+              v-else
+              class="songName"
+              @click="clickMuiscName_Skpi_doc(null)"
+            >
+              {{ item.treeJson_data.program.name }}
+            </span>
+            <span class="singerName" v-if="item.treeJson_data.program.mainSong">
               {{ computeSingerAs(item.treeJson_data.program.mainSong.artists) }}
             </span>
           </div>
@@ -141,8 +151,8 @@
             >
           </div>
         </div>
-        <!-- 视频 -->
-        <div class="mv" v-if="item.type === 21 || item.type === 41">
+        <!-- MV -->
+        <div class="mv" v-if="item.type === 21">
           <img
             v-lazy="item.treeJson_data.mv.imgurl16v9 + '?param=450y260'"
             :alt="item.treeJson_data.mv.name"
@@ -189,6 +199,7 @@
           </div>
         </div>
         <!-- 转发··暂时没有实现 -->
+        <!-- 视频··暂时没有实现 -->
         <div
           class="follow_img"
           v-if="item.pics.length === 1 && item.type != 56"
@@ -269,7 +280,13 @@ export default defineComponent({
      * 功能::点击跳转音乐详情页面
      */
     function clickMuiscName_Skpi_doc(id) {
-      console.log(id);
+      ElMessage.closeAll();
+      if (!id) {
+        return ElMessage({
+          type: "warning",
+          message: "功能暂未开发",
+        });
+      }
       // DOTO:
       router.push("/layout/home/songDetails/" + id);
     }
@@ -279,6 +296,13 @@ export default defineComponent({
      * 功能：点击播放icon,播放音乐——添加到音乐播放列表
      */
     function clickPlayIcon_playMusic(music_data) {
+      ElMessage.closeAll();
+      if (!music_data) {
+        return ElMessage({
+          type: "warning",
+          message: "功能暂未开发",
+        });
+      }
       let obj = {
         name: music_data.name,
         id: music_data.id,
