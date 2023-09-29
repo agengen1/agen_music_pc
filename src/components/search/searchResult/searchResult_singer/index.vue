@@ -6,6 +6,10 @@
       title="加载中..."
     ></Loading>
     <div class="content" v-else>
+      <el-empty
+        v-if="singerList.length <= 0 && !searchResultSinger_flag"
+        description="暂无搜索歌手"
+      />
       <div class="info" v-for="item in singerList" :key="item.id">
         <img
           v-lazy="item.picUrl + '?param=150y150'"
@@ -19,6 +23,7 @@
         ></p>
       </div>
     </div>
+
     <div class="paginatio">
       <el-pagination
         background
@@ -118,7 +123,7 @@ export default defineComponent({
         offset
       );
       searchResultSinger_flag.value = false;
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.result.artists) {
         singerList.value = res.result.artists;
         if (res.result.artistCount) {
           total.value = res.result.artistCount;
@@ -150,6 +155,9 @@ export default defineComponent({
 <style lang='less' scoped>
 .searchResultSinger {
   padding: 20px;
+  /deep/ .el-empty {
+    width: 100%;
+  }
   .content {
     min-height: 40vh;
     display: flex;

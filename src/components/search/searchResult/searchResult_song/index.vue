@@ -12,6 +12,7 @@
       :keyWord="key"
       :isSearchUse="true"
     ></musicList>
+
     <div class="paginatio">
       <el-pagination
         background
@@ -87,7 +88,7 @@ export default defineComponent({
         offset
       );
       searchResultSong_flag.value = false;
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.result.songs) {
         songList.value = res.result.songs;
         if (res.result.songCount) {
           total.value = res.result.songCount;

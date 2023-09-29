@@ -6,6 +6,10 @@
       title="加载中..."
     ></Loading>
     <div class="content" v-else>
+      <el-empty
+        v-if="songSheetList.length <= 0 && !searchResultSongSheet_flag"
+        description="暂无搜索歌单"
+      />
       <div class="info" v-for="item in songSheetList" :key="item.id">
         <img
           v-lazy="item.coverImgUrl + '?param=300y300'"
@@ -105,7 +109,7 @@ export default defineComponent({
         offset
       );
       searchResultSongSheet_flag.value = false;
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.result && res.result.playlists) {
         songSheetList.value = res.result.playlists;
         if (res.result.playlistCount) {
           total.value = res.result.playlistCount;
@@ -136,6 +140,9 @@ export default defineComponent({
 
 <style lang='less' scoped>
 .searchResultSongSheet {
+  /deep/ .el-empty {
+    width: 100%;
+  }
   padding: 20px;
   .content {
     min-height: 40vh;

@@ -97,7 +97,12 @@
               v-if="item.followed"
               >已关注</el-button
             >
-            <el-button type="primary" :icon="Plus" size="small" v-else
+            <el-button
+              type="primary"
+              :icon="Plus"
+              size="small"
+              v-else
+              @click="clickFollow_button(item.userId)"
               >关注</el-button
             >
           </div>
@@ -125,9 +130,13 @@ import { defineComponent, watch, ref } from "vue";
 import {
   getUserFollowedListapi,
   getUserDetailsapi,
+  setFollowerapi,
+  CreatedVerifyapi,
 } from "@/api/userDetailsApi";
 import { useRouter, useRoute } from "vue-router";
 import { Plus, Check, Female, Male, User } from "@element-plus/icons-vue";
+import { useStore } from "vuex";
+
 import { ElMessage } from "element-plus";
 
 export default defineComponent({
@@ -139,6 +148,7 @@ export default defineComponent({
   setup() {
     let router = useRouter();
     let route = useRoute();
+    let store = useStore();
     let all_doc_flag = ref(true); //全部加载状态
     let followedList_falg = ref(true); //加载状态
     let pagCount = ref(30); //每一页数量
@@ -192,6 +202,77 @@ export default defineComponent({
         true
       );
     }
+
+    /**
+     * 点击按钮关注
+     */
+    function clickFollow_button(id) {
+      setFollower(id, 1);
+    }
+    /**
+     * 关注/取消关注  用户
+     * @param {string | number} id : 用户 id
+     * @param {string | number} t : 1为关注,2为取消关注
+     */
+    async function setFollower(id, t) {
+      const { data: res } = await setFollowerapi(id, t);
+      if (res && res.code === 200) {
+        ElMessage.closeAll();
+
+        ElMessage({
+          type: "success",
+          message: "关注成功，谢谢关注!",
+        });
+        for (let i = 0; i < followedList.value.length; i++) {
+          if (followedList.value[i].userId === id) {
+            followedList.value[i].followed = true;
+            break;
+          }
+        }
+      } else if (res && res.code === 250) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "error",
+          message: res.message,
+        });
+      } else {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "warning",
+          message: "需要进行验证！",
+        });
+        CreatedVerify(
+          res.verifyId,
+          res.verifyType,
+          res.verifyToken,
+          res.params.event_id,
+          res.params.sign
+        );
+      }
+    }
+    /**
+     * 验证接口-二维码生成（用于关注等接口验证）
+     * @param {number} vid: 触发验证后,接口返回的verifyId
+     * @param {number} type:触发验证后,接口返回的verifyType
+     * @param {string} token:触发验证后,接口返回的verifyToken
+     * @param {string} evid:触发验证后,接口返回的params的event_id
+     * @param {string} sign:触发验证后,接口返回的params的sign
+     */
+    async function CreatedVerify(vid, type, token, evid, sign) {
+      const { data: res } = await CreatedVerifyapi(
+        vid,
+        type,
+        token,
+        evid,
+        sign
+      );
+      if (res && res.code === 200) {
+        store.commit("verify/SETVERIFYOPENSTATUS", true);
+        store.commit("verify/SETVERIFYURL", res.data.qrurl);
+        store.commit("verify/SETVERIFYCODE", res.data.qrCode);
+      }
+    }
+
     /**
      * 获取用户详情
      * @param { String | Number} id 用户id
@@ -245,6 +326,7 @@ export default defineComponent({
       User,
       login_id,
       click_typeSkipDoc,
+      clickFollow_button,
       clickUserNameSkip_doc,
     };
   },

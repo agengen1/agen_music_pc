@@ -27,7 +27,13 @@
                 v-if="user_info.profile.followed"
                 >已关注</el-button
               >
-              <el-button type="primary" :icon="Plus" v-else>关注</el-button>
+              <el-button
+                type="primary"
+                :icon="Plus"
+                v-else
+                @click="clickFollow_button(user_info.profile.userId)"
+                >关注</el-button
+              >
 
               <el-button
                 v-if="
@@ -270,11 +276,11 @@ import {
   computeSingerAs,
 } from "@/assets/public";
 import { ElMessage } from "element-plus";
-import Loading from "../tool_components/loading.vue";
+import { setFollowerapi, CreatedVerifyapi } from "@/api/userDetailsApi";
+
 export default defineComponent({
   name: "userDetails",
   components: {
-    Loading,
     Mic,
     Male,
     Female,
@@ -401,6 +407,69 @@ export default defineComponent({
       router.push(`/layout/home/EventList/${userid}`);
     }
     /**
+     * 点击按钮关注
+     */
+    function clickFollow_button(id) {
+      setFollower(id, 1);
+    }
+    /**
+     * 关注/取消关注  用户
+     * @param {string | number} id : 用户 id
+     * @param {string | number} t : 1为关注,2为取消关注
+     */
+    async function setFollower(id, t) {
+      const { data: res } = await setFollowerapi(id, t);
+      if (res && res.code === 200) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "success",
+          message: "关注成功，谢谢关注!",
+        });
+        user_info.value.profile.followed = true;
+      } else if (res && res.code === 250) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "error",
+          message: res.message,
+        });
+      } else {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "warning",
+          message: "需要进行验证！",
+        });
+        CreatedVerify(
+          res.verifyId,
+          res.verifyType,
+          res.verifyToken,
+          res.params.event_id,
+          res.params.sign
+        );
+      }
+    }
+    /**
+     * 验证接口-二维码生成（用于关注等接口验证）
+     * @param {number} vid: 触发验证后,接口返回的verifyId
+     * @param {number} type:触发验证后,接口返回的verifyType
+     * @param {string} token:触发验证后,接口返回的verifyToken
+     * @param {string} evid:触发验证后,接口返回的params的event_id
+     * @param {string} sign:触发验证后,接口返回的params的sign
+     */
+    async function CreatedVerify(vid, type, token, evid, sign) {
+      const { data: res } = await CreatedVerifyapi(
+        vid,
+        type,
+        token,
+        evid,
+        sign
+      );
+      if (res && res.code === 200) {
+        store.commit("verify/SETVERIFYOPENSTATUS", true);
+        store.commit("verify/SETVERIFYURL", res.data.qrurl);
+        store.commit("verify/SETVERIFYCODE", res.data.qrCode);
+      }
+    }
+    /**
      * 点击切换数据展示
      * @param {number} type 类型code
      */
@@ -487,6 +556,7 @@ export default defineComponent({
       computeSingerAs,
       clickMuiscName_Skpi_doc,
       clickSkipEventList,
+      clickFollow_button,
     };
   },
 });
@@ -724,7 +794,7 @@ export default defineComponent({
             border-radius: 10px;
           }
           p {
-            padding: 10px;
+            padding: 4px;
             &:hover {
               text-decoration: underline;
               color: #409eff;

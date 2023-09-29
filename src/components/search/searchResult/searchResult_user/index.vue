@@ -6,6 +6,10 @@
       title="加载中..."
     ></Loading>
     <div class="content" v-else>
+      <el-empty
+        v-if="userList.length <= 0 && !searchResultUser_flag"
+        description="暂无搜索用户"
+      />
       <ul>
         <li
           class="info"
@@ -170,7 +174,7 @@ export default defineComponent({
         offset
       );
       searchResultUser_flag.value = false;
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.result.userprofiles) {
         userList.value = res.result.userprofiles;
         if (res.result.userprofileCount) {
           total.value = res.result.userprofileCount;
@@ -196,12 +200,24 @@ export default defineComponent({
           type: "success",
           message: "关注成功，谢谢关注!",
         });
+        for (let i = 0; i < userList.value.length; i++) {
+          if (userList.value[i].userId === id) {
+            userList.value[i].followed = true;
+            break;
+          }
+        }
+      } else if (res && res.code === 250) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "error",
+          message: res.message,
+        });
       } else {
         ElMessage.closeAll();
-        // ElMessage({
-        //   type: "error",
-        //   message: "关注失败!",
-        // });
+        ElMessage({
+          type: "warning",
+          message: "需要进行验证！",
+        });
         CreatedVerify(
           res.verifyId,
           res.verifyType,
@@ -253,6 +269,9 @@ export default defineComponent({
 
 <style lang='less' scoped>
 .searchResultUser {
+  /deep/ .el-empty {
+    width: 100%;
+  }
   padding: 20px;
   .content {
     min-height: 40vh;

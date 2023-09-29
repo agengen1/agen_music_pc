@@ -6,6 +6,10 @@
       title="加载中..."
     ></Loading>
     <div class="content" v-else>
+      <el-empty
+        v-if="mvList.length <= 0 && !searchResultMv_flag"
+        description="暂无搜索MV"
+      />
       <div class="info" v-for="item in mvList" :key="item.id">
         <img
           v-lazy="item.cover + '?param=450y260'"
@@ -123,7 +127,7 @@ export default defineComponent({
         offset
       );
       searchResultMv_flag.value = false;
-      if (res && res.code === 200) {
+      if (res && res.code === 200 && res.result.mvs) {
         mvList.value = res.result.mvs;
         if (res.result.mvCount) {
           total.value = res.result.mvCount;
@@ -157,6 +161,9 @@ export default defineComponent({
 <style lang='less' scoped>
 .searchResultMv {
   padding: 20px;
+  /deep/ .el-empty {
+    width: 100%;
+  }
   .content {
     display: flex;
     min-height: 40vh;

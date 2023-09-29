@@ -109,7 +109,7 @@
           <Loading
             title="加载中...."
             textColor="#409eff"
-            v-if="hot_comment_list.length <= 0"
+            v-if="hot_comment_flag"
           ></Loading>
           <ul v-else>
             <li v-for="item in hot_comment_list" :key="item.commentId">
@@ -150,8 +150,12 @@
               </div>
             </li>
           </ul>
+          <el-empty
+            v-if="hot_comment_list.length <= 0 && !hot_comment_flag"
+            description="暂无热门评论"
+          />
         </div>
-        <div class="comments">
+        <div class="comments" v-if="comment_list.length > 0">
           <h2>
             最新热评 <el-icon color="#ff006d"><Clock /></el-icon>
           </h2>
@@ -160,7 +164,7 @@
               <Loading
                 title="加载中...."
                 textColor="#409eff"
-                v-if="comment_list.length <= 0"
+                v-if="loading_flag"
               ></Loading>
               <ul v-else>
                 <li v-for="item in comment_list" :key="item.commentId">
@@ -210,7 +214,7 @@
                 </li>
               </ul>
             </div>
-            <div class="comments_buttons">
+            <div class="comments_buttons" v-if="all_pages > 1">
               <el-button
                 type="primary"
                 :disabled="disabled_text == 'left'"
@@ -263,6 +267,7 @@
   </div>
 </template>
 <script>
+``;
 import {
   computed,
   defineComponent,
@@ -320,6 +325,7 @@ export default defineComponent({
     let li_active_el_height = 25; //每首歌词高度
     let index = ref(0); // index表示当前播放到歌词索引 -- 用来滚动歌词
     let hot_comment_list = ref([]); //表示热门评论
+    let hot_comment_flag = ref(true); //表示热门评论加载状态
 
     let disabled_text = ref("left"); //上下一页按钮禁用 left表示上一页禁用 right表示下一页禁用
     let pageNO = ref(1); //分页页码
@@ -333,6 +339,8 @@ export default defineComponent({
     let all_pages = computed(() => {
       if (CountTotal.value > 0 && pageCount.value > 0) {
         return Math.ceil(CountTotal.value / pageCount.value);
+      } else {
+        return 1;
       }
     }); //表示共有多少页
 
@@ -374,6 +382,8 @@ export default defineComponent({
       (newVal) => {
         if (newVal) {
           pageNO.value = 1;
+          loading_flag.value = true;
+          hot_comment_flag.value = true;
           getSongDetails(newVal);
           getSongDetailsLyric(newVal);
           getSongDetailsComment(newVal, pageCount.value, pageNO.value);
@@ -631,6 +641,8 @@ export default defineComponent({
      */
     async function getSongDetailsHotComment(id, type) {
       const { data: res } = await getSongDetailsHotCommentapi(id, type);
+      hot_comment_flag.value = false;
+
       if (res && res.code === 200) {
         hot_comment_list.value = res.hotComments;
       }
@@ -681,6 +693,7 @@ export default defineComponent({
       pageNO,
       all_pages,
       loading_flag,
+      hot_comment_flag,
       stamp_time,
       clickSingerName_Skpi_doc,
       clickSkipAlbum_doc,

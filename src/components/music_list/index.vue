@@ -80,7 +80,9 @@
         </li>
       </ul>
       <el-empty v-else description="歌单暂无音乐">
-        <el-button type="primary">前往音乐馆收藏音乐</el-button>
+        <el-button v-if="route.name == 'musicSongSheet'" type="primary"
+          >前往音乐馆收藏音乐</el-button
+        >
       </el-empty>
     </div>
   </div>
@@ -208,6 +210,13 @@ export default defineComponent({
      * @param {array}  songsList 音乐单曲数组
      */
     function clickPlaySongsMusic_all(songsList) {
+      ElMessage.closeAll();
+      if (songsList.length <= 0) {
+        return ElMessage({
+          type: "error",
+          message: "暂无可播放音乐",
+        });
+      }
       let arr_songs = [];
       songsList.forEach((el) => {
         arr_songs.push({
