@@ -37,7 +37,9 @@
                   @click="clickUserNameSkip_doc(user_userinfo.userId)"
                   >我的主页</el-dropdown-item
                 >
-                <el-dropdown-item :icon="icon.TrophyBase"
+                <el-dropdown-item
+                  :icon="icon.TrophyBase"
+                  @click="clickUserLevelSkip_doc()"
                   >我的等级</el-dropdown-item
                 >
                 <el-dropdown-item
@@ -60,8 +62,8 @@
             class="iconfont icon-github"
           ></i>
         </a>
-      </div> </el-menu
-    >·
+      </div>
+    </el-menu>
   </div>
   <router-view></router-view>
   <div class="Layout_Footer" v-if="disappear_footer"></div>
@@ -115,7 +117,12 @@ export default defineComponent({
     function clickUserNameSkip_doc(id) {
       router.push("/layout/home/userDetails/" + id);
     }
-
+    /**
+     * 点击跳转用户等级详情页面
+     */
+    function clickUserLevelSkip_doc() {
+      router.push("/layout/home/userLevel");
+    }
     /**
      * 点击退出登录
      */
@@ -175,6 +182,7 @@ export default defineComponent({
       clickOpenLogin,
       clickLogout,
       clickUserNameSkip_doc,
+      clickUserLevelSkip_doc,
     };
   },
 });

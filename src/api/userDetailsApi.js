@@ -136,3 +136,10 @@ export function getUserFansListapi(uId, limit, offset) {
     }&timestamp=${Date.now()}`
   );
 }
+
+/**
+ * 获取用户等级信息
+ */
+export function getUserLevelapi() {
+  return axios.get("/user/level");
+}
