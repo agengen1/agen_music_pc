@@ -425,8 +425,6 @@ export default defineComponent({
       }
     }
     return {
-      followList: props.followList,
-      pageNO: props.pageNO,
       clickMuiscName_Skpi_doc,
       clickPlayIcon_playMusic,
       clickSkpiWebPag,
