@@ -5,7 +5,7 @@ import axios from "@/utils/request";
  * @param { String | Number} id 用户id
  */
 export function getUserDetailsapi(id) {
-  return axios.get(`/user/detail?uid=${id}`);
+  return axios.get(`/user/detail?uid=${id}&timestamp=${Date.now()}`);
 }
 
 /**

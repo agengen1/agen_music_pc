@@ -266,6 +266,8 @@ import {
   getUserDetailsapi,
   getUserSongSheetDetailsapi,
   getUserPlayRecordsapi,
+  setFollowerapi,
+  CreatedVerifyapi,
 } from "@/api/userDetailsApi";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
@@ -276,7 +278,6 @@ import {
   computeSingerAs,
 } from "@/assets/public";
 import { ElMessage } from "element-plus";
-import { setFollowerapi, CreatedVerifyapi } from "@/api/userDetailsApi";
 
 export default defineComponent({
   name: "userDetails",

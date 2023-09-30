@@ -35,6 +35,23 @@
             "
             >播放全部</el-button
           >
+          <el-button
+            v-if="SongSheet_details.subscribed"
+            type="success"
+            size="large"
+            :icon="icon.Check"
+            disabled
+            >已收藏({{ SongSheet_details.subscribedCount }})</el-button
+          >
+          <el-button
+            v-else
+            type="info"
+            size="large"
+            :icon="icon.Plus"
+            :disabled="userId === SongSheet_details.creator.userId"
+            @click="setSongSheetFollower(SongSheet_details.id, 1)"
+            >收藏({{ SongSheet_details.subscribedCount }})</el-button
+          >
           <el-button type="info" size="large" plain :icon="icon.Share"
             >分享({{ SongSheet_details.shareCount }})</el-button
           >
@@ -77,14 +94,21 @@
 </template>
       
 <script>
-import { defineComponent, markRaw, ref, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import musicList from "@/components/music_list/index.vue";
 import {
   getSongSheet_desc_api,
   getSongSheet_Music_All_api,
+  setSongSheetFollowerapi,
 } from "@/api/songSheetDeaitlsApi";
-import { Share, Comment, VideoPlay } from "@element-plus/icons-vue";
+import {
+  Share,
+  Comment,
+  VideoPlay,
+  Check,
+  Plus,
+} from "@element-plus/icons-vue";
 import { stamp_time } from "@/assets/public";
 import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
@@ -97,7 +121,7 @@ export default defineComponent({
     let route = useRoute();
     let router = useRouter();
     let store = useStore();
-
+    let userId = parseInt(localStorage.getItem("userId")); //登录用户id
     let SongSheet_details = ref({});
     let data_loading = ref(true);
     let desc_height = ref(50); //desc允许展示高度
@@ -162,6 +186,27 @@ export default defineComponent({
       router.push("/layout/home/userDetails/" + id);
     }
     /**
+     * 收藏/取消收藏  歌单
+     * @param {string | number} id : 歌单 id
+     * @param {string | number} t : 1为收藏,2为取消收藏
+     */
+    async function setSongSheetFollower(id, t) {
+      const { data: res } = await setSongSheetFollowerapi(id, t);
+      if (res && res.code === 200) {
+        ElMessage({
+          type: "success",
+          message: "收藏歌单成功！",
+        });
+        SongSheet_details.value.subscribed = true;
+        SongSheet_details.value.subscribedCount++;
+      } else {
+        ElMessage({
+          type: "error",
+          message: "收藏歌单失败！",
+        });
+      }
+    }
+    /**
      * getSongSheet_desc
      * @param {number} id
      * 获取歌单详情-歌单所有音乐
@@ -174,7 +219,7 @@ export default defineComponent({
         );
         if (res_all.code === 200) {
           res.playlist["SongSheet_allMusic"] = res_all.songs;
-          SongSheet_details.value = markRaw(res.playlist);
+          SongSheet_details.value = res.playlist;
           data_loading.value = false;
           if (SongSheet_details.value.description) {
             SongSheet_details.value["description_arr"] =
@@ -215,6 +260,7 @@ export default defineComponent({
       }
     );
     return {
+      route,
       data_loading,
       SongSheet_details,
       clickUserNameSkip_doc,
@@ -223,11 +269,15 @@ export default defineComponent({
       clickPackUpText,
       clickExpandText,
       clickPlaySongsMusic_all,
+      userId,
+      setSongSheetFollower,
       desc_height_str: desc_height.value + "px",
       icon: {
         Share,
         Comment,
         VideoPlay,
+        Check,
+        Plus,
       },
     };
   },

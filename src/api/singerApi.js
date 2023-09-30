@@ -30,7 +30,7 @@ export const getSingerClass_typeapi = (type, area, limit, offset) => {
  * @param {String | number} id 歌手id
  */
 export const getSingerDetailsapi = (id) => {
-  return axios.get(`/artist/detail?id=${id}`);
+  return axios.get(`/artist/detail?id=${id}&timestamp=${Date.now()}`);
 };
 
 /**
@@ -79,3 +79,12 @@ export const getSingerMeLikeapi = (limit, offset) => {
     `/artist/sublist?limit=${limit}&offset=${(offset - 1) * limit}`
   );
 };
+
+/**
+ * 收藏/取消收藏  歌手
+ * @param {string | number} id : 歌手 id
+ * @param {string | number} t : 1为收藏,2为取消收藏
+ */
+export function setSingerFollowerapi(id, t) {
+  return axios.get(`/artist/sub?id=${id}&t=${t}&timestamp=${Date.now()}`);
+}

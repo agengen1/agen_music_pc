@@ -108,3 +108,14 @@ export const getSongSheetSubscribers_api = (songSheetId, limit, offset) => {
     }`
   );
 };
+
+/**
+ * 收藏/取消收藏  歌单
+ * @param {string | number} id : 歌单 id
+ * @param {string | number} t : 1为收藏,2为取消收藏
+ */
+export function setSongSheetFollowerapi(id, t) {
+  return axios.get(
+    `/playlist/subscribe?t=${t}&id=${id}&timestamp=${Date.now()}`
+  );
+}

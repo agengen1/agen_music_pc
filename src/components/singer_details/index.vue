@@ -52,7 +52,22 @@
               </span>
             </p>
             <p class="info_buttons">
-              <el-button type="primary" :icon="FolderAdd">收藏</el-button>
+              <el-button
+                type="success"
+                v-if="singerDetails.user && singerDetails.user.followed == true"
+                :icon="Check"
+                disabled
+                >已收藏</el-button
+              >
+              <el-button
+                type="primary"
+                v-else-if="
+                  singerDetails.user && singerDetails.user.followed == false
+                "
+                :icon="FolderAdd"
+                @click="clickSingerFollow_button(singerDetails.artist.id)"
+                >收藏</el-button
+              >
               <el-button
                 v-if="singerDetails.user && singerDetails.user.userId"
                 type="success"
@@ -124,10 +139,15 @@ import goBack from "@/components/tool_components/goBack.vue";
 import { getSingerDetailsapi, getSingerSimilarapi } from "@/api/singerApi";
 import { useRoute, useRouter } from "vue-router";
 import { computeSingerAs } from "@/assets/public";
-import { FolderAdd, User } from "@element-plus/icons-vue";
+import { useStore } from "vuex";
+import { FolderAdd, Check, User } from "@element-plus/icons-vue";
 import allAlbum from "@/components/singer_details/all_album/index.vue";
 import hotSongs from "@/components/singer_details/hot_songs/index.vue";
 import singerDesc from "@/components/singer_details/singer_desc/index.vue";
+import { CreatedVerifyapi } from "@/api/userDetailsApi";
+import { setSingerFollowerapi } from "@/api/singerApi";
+import { ElMessage } from "element-plus";
+
 export default defineComponent({
   name: "singerDetails",
   components: {
@@ -137,6 +157,8 @@ export default defineComponent({
     singerDesc,
   },
   setup() {
+    let store = useStore();
+
     let route = useRoute();
     let router = useRouter();
     let singerDetails = ref({}); //歌手详情
@@ -169,6 +191,71 @@ export default defineComponent({
       // TODO:
       router.push(`/layout/home/singerDetails/${singerId}`);
     }
+
+    /**
+     * 点击按钮收藏
+     */
+    function clickSingerFollow_button(id) {
+      setSingerFollower(id, 1);
+    }
+    /**
+     * 收藏/取消收藏  歌手
+     * @param {string | number} id : 歌手 id
+     * @param {string | number} t : 1为收藏,2为取消收藏
+     */
+    async function setSingerFollower(id, t) {
+      const { data: res } = await setSingerFollowerapi(id, t);
+      if (res && res.code === 200) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "success",
+          message: "收藏成功，谢谢!",
+        });
+        singerDetails.value.user.followed = true;
+      } else if (res && res.code === 250) {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "error",
+          message: res.message,
+        });
+      } else {
+        ElMessage.closeAll();
+        ElMessage({
+          type: "warning",
+          message: "需要进行验证！",
+        });
+        CreatedVerify(
+          res.verifyId,
+          res.verifyType,
+          res.verifyToken,
+          res.params.event_id,
+          res.params.sign
+        );
+      }
+    }
+    /**
+     * 验证接口-二维码生成（用于关注等接口验证）
+     * @param {number} vid: 触发验证后,接口返回的verifyId
+     * @param {number} type:触发验证后,接口返回的verifyType
+     * @param {string} token:触发验证后,接口返回的verifyToken
+     * @param {string} evid:触发验证后,接口返回的params的event_id
+     * @param {string} sign:触发验证后,接口返回的params的sign
+     */
+    async function CreatedVerify(vid, type, token, evid, sign) {
+      const { data: res } = await CreatedVerifyapi(
+        vid,
+        type,
+        token,
+        evid,
+        sign
+      );
+      if (res && res.code === 200) {
+        store.commit("verify/SETVERIFYOPENSTATUS", true);
+        store.commit("verify/SETVERIFYURL", res.data.qrurl);
+        store.commit("verify/SETVERIFYCODE", res.data.qrCode);
+      }
+    }
+
     /**
      * 歌手详情获取
      * @param {String | number} id 歌手id
@@ -198,8 +285,10 @@ export default defineComponent({
       similarSinger_flag,
       similarSinger,
       FolderAdd,
+      Check,
       User,
       clickSkipSingerDetails,
+      clickSingerFollow_button,
     };
   },
 });
