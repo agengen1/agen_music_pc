@@ -73,7 +73,10 @@
             ><el-icon :size="20"><VideoPlay /></el-icon>&nbsp;
             立即播放</el-button
           >
-          <el-button type="success" round
+          <el-button
+            type="success"
+            round
+            @click="clickButton_pushMusic(song_info.id)"
             ><el-icon :size="20"><FolderAdd /></el-icon>&nbsp; 收藏</el-button
           >
           <el-button type="info" plain round
@@ -432,6 +435,14 @@ export default defineComponent({
       }
     }
     /**
+     * 点击添加单曲到歌单
+     * @param {number} id 单曲id
+     */
+    function clickButton_pushMusic(id) {
+      store.commit("collect/SETCOLLECTMUSIC_ID", id);
+      store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
+    }
+    /**
      * 点击复制歌词
      * @param {array}  lyric_arr 歌词数组
      */
@@ -706,6 +717,7 @@ export default defineComponent({
       click_lyricCopy,
       Download,
       CopyDocument,
+      clickButton_pushMusic,
     };
   },
 });

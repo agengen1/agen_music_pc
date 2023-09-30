@@ -119,3 +119,15 @@ export function setSongSheetFollowerapi(id, t) {
     `/playlist/subscribe?t=${t}&id=${id}&timestamp=${Date.now()}`
   );
 }
+
+/**
+ * 歌单添加或删除歌曲
+ * @param {string } op: 从歌单增加单曲为 add, 删除为 del
+ * @param {string | number} pid: 歌单 id
+ * @param {string | number} tracks: 歌曲 id,可多个,用逗号隔开
+ */
+export function push_delSongSheetMusicapi(op, pid, tracks) {
+  return axios.get(
+    `/playlist/tracks?op=${op}&pid=${pid}&tracks=${tracks}&timestamp=${Date.now()}`
+  );
+}

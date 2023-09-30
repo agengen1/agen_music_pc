@@ -1,6 +1,5 @@
 <template>
   <router-view></router-view>
-  <!-- <el-backtop :right="100" :bottom="100" />  element-puls组件返回顶部-->
   <van-back-top :offset="300" bottom="20vh" right="3%" />
   <!-- 播放器组件 -->
   <PLAYCONTROL
@@ -20,6 +19,15 @@
   >
     <VERIFY></VERIFY>
   </el-dialog>
+  <!-- 收藏单曲页面 -->
+  <el-dialog
+    v-model="collectOpenStatus"
+    width="40%"
+    destroy-on-close
+    title="收藏单曲到歌单"
+  >
+    <COLLECTMUSIC></COLLECTMUSIC>
+  </el-dialog>
 </template>
 
 <script>
@@ -27,6 +35,7 @@ import { computed, defineComponent, watch, ref } from "vue";
 import PLAYCONTROL from "@/components/playControl/index.vue";
 import LOGIN from "@/components/login/index.vue";
 import VERIFY from "@/components/verify/index.vue";
+import COLLECTMUSIC from "@/components/collect_music/index.vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import { getLoginStatusapi } from "@/api/loginApi";
@@ -38,6 +47,7 @@ export default defineComponent({
     PLAYCONTROL,
     LOGIN,
     VERIFY,
+    COLLECTMUSIC,
   },
   setup() {
     let store = useStore();
@@ -58,6 +68,14 @@ export default defineComponent({
         store.commit("verify/SETVERIFYOPENSTATUS", newVal);
       },
     }); //验证页面打开状态
+    let collectOpenStatus = computed({
+      get() {
+        return store.state.collect.collectMusic_status;
+      },
+      set(newVal) {
+        store.commit("collect/SETCOLLECTMUSIC_STATUS", newVal);
+      },
+    }); //收藏单曲页面打开状态
     let userId = parseInt(localStorage.getItem("userId"));
     let playMusic_list = computed(() => {
       return store.state.player.playMusic_list;
@@ -111,6 +129,7 @@ export default defineComponent({
       login_openState,
       player_control_flag,
       verifyOpenStatus,
+      collectOpenStatus,
       playMusic_list,
     };
   },

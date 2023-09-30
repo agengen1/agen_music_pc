@@ -178,7 +178,9 @@
               </div>
               <div class="play_handler_button">
                 <span title="收藏"
-                  ><el-icon data-playListing="is_playlist"
+                  ><el-icon
+                    data-playListing="is_playlist"
+                    @click="clickButton_pushMusic(item.id)"
                     ><FolderAdd /></el-icon
                 ></span>
                 <span title="删除"
@@ -487,6 +489,14 @@ export default defineComponent({
       }
     }
     /**
+     * 点击添加单曲到歌单
+     * @param {number} id 单曲id
+     */
+    function clickButton_pushMusic(id) {
+      store.commit("collect/SETCOLLECTMUSIC_ID", id);
+      store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
+    }
+    /**
      * 点击取消/喜欢 歌曲
      * @param {Object}  objData (对象中包括type:取消(false)，还是喜欢(true)，id:歌曲id)
      */
@@ -675,6 +685,7 @@ export default defineComponent({
       clickPlayMusic_delete_music,
       clickPlayMusic_delete_all_music,
       click_close_playlisting,
+      clickButton_pushMusic,
     };
   },
 });
