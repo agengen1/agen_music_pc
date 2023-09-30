@@ -32,7 +32,7 @@
       <div class="content_right">
         <div class="header">
           <p class="text_exceed_hide_one">
-            <span>
+            <span class="name_vip">
               {{ song_info.name }}
               <i v-if="song_info.fee === 1" class="vipDis">VIP单曲</i>
             </span>
@@ -769,6 +769,18 @@ export default defineComponent({
                 color: #848484;
               }
             }
+            .name_vip {
+              display: flex;
+              align-items: center;
+              .vipDis {
+                margin-left: 5px;
+                padding: 2px 10px 2px 5px;
+                border-radius: 10px;
+                background-color: red;
+                color: #fff;
+                font-size: 14px;
+              }
+            }
           }
           &:nth-child(2) {
             color: #848484;
@@ -799,13 +811,6 @@ export default defineComponent({
           &:nth-child(4) {
             color: #848484;
             font-size: 16px;
-          }
-          .vipDis {
-            padding: 2px 5px;
-            border-radius: 10px;
-            background-color: red;
-            color: #fff;
-            font-size: 14px;
           }
         }
       }
