@@ -1,4 +1,8 @@
 /*将所有标签的内外边距清零*/
+body{
+    min-width: 1300px;
+    min-height: 700px;
+}
 * {
     margin: 0;
     padding: 0
@@ -7,7 +11,7 @@
 li {
     list-style: none
 }
- 
+  
 img {
     /*border: 0 照顾低版本浏览器，如果图片外面有链接会有边框的问题*/
     border: 0;

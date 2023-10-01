@@ -28,7 +28,6 @@
         <div class="SongSheet_other">
           <el-button
             type="primary"
-            size="large"
             :icon="icon.VideoPlay"
             @click="
               clickPlaySongsMusic_all(SongSheet_details.SongSheet_allMusic)
@@ -38,7 +37,6 @@
           <el-button
             v-if="SongSheet_details.subscribed"
             type="success"
-            size="large"
             :icon="icon.Check"
             disabled
             >已收藏({{ SongSheet_details.subscribedCount }})</el-button
@@ -46,17 +44,13 @@
           <el-button
             v-else
             type="info"
-            size="large"
-            :icon="icon.Plus"
+            :icon="icon.FolderAdd"
             :disabled="userId === SongSheet_details.creator.userId"
             @click="setSongSheetFollower(SongSheet_details.id, 1)"
             >收藏({{ SongSheet_details.subscribedCount }})</el-button
           >
-          <el-button type="info" size="large" plain :icon="icon.Share"
+          <el-button type="info" plain :icon="icon.Share"
             >分享({{ SongSheet_details.shareCount }})</el-button
-          >
-          <el-button type="info" size="large" plain :icon="icon.Comment"
-            >评论({{ SongSheet_details.commentCount }})</el-button
           >
         </div>
         <div
@@ -107,7 +101,7 @@ import {
   Comment,
   VideoPlay,
   Check,
-  Plus,
+  FolderAdd,
 } from "@element-plus/icons-vue";
 import { stamp_time } from "@/assets/public";
 import { ElMessage } from "element-plus";
@@ -277,7 +271,7 @@ export default defineComponent({
         Comment,
         VideoPlay,
         Check,
-        Plus,
+        FolderAdd,
       },
     };
   },

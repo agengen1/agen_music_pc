@@ -41,6 +41,7 @@
 import { defineComponent, ref } from "vue";
 import { getSingerAlbumapi } from "@/api/singerApi";
 import { stamp_time } from "@/assets/public";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: "allAlbum",
   props: {
@@ -52,6 +53,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    let router = useRouter();
     let albumList = ref([]); //专辑列表数据
     let pageNo = ref(1); // 分页页数
     let pageSize = ref(20); //每一页多少条数据
@@ -73,7 +75,7 @@ export default defineComponent({
      */
     function clickSkipAlbumDetails(id) {
       // TODO:
-      console.log(`跳转专辑详情页id${id}`);
+      router.push(`/layout/home/albumDetails/${id}`);
     }
     /**
      * 获取歌手专辑
@@ -85,7 +87,6 @@ export default defineComponent({
       const { data: res } = await getSingerAlbumapi(id, limit, offset);
       flag.value = false;
       if (res && res.code === 200) {
-        console.log(res);
         albumList.value = res.hotAlbums;
       }
     }

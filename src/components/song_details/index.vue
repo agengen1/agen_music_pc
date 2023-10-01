@@ -421,8 +421,7 @@ export default defineComponent({
      * 功能：点击跳转，通过传递的参数跳转到歌单详情页
      */
     function clickSkipAlbum_doc(albumID) {
-      console.log(albumID);
-      // 跳转歌单详情页 TODO:
+      router.push(`/layout/home/albumDetails/${albumID}`);
     }
     /**
      * 点击全部歌词弹出框未打开则弹出，否则相反

@@ -6,9 +6,12 @@
           >歌曲列表({{ music_total_P }})
           <el-button
             v-if="
-              !['songSheetDetail', 'charts_details', 'musicSongSheet'].includes(
-                route.name
-              )
+              ![
+                'songSheetDetail',
+                'charts_details',
+                'musicSongSheet',
+                'albumDetails',
+              ].includes(route.name)
             "
             type="primary"
             size="small"

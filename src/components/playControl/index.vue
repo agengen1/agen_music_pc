@@ -403,6 +403,7 @@ export default defineComponent({
         music_urlInfo.value.fee === 0 &&
         music_urlInfo.value.is_copyright === false
       ) {
+        store.commit("player/SETPLAYMUSIC_TIME", 0);
         info_prompt("提示", "<i style='color:red;'>暂无版权！</i>");
         return;
       }

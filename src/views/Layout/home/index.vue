@@ -9,6 +9,7 @@
       :class="{
         isBackColorTransparent: route.name === 'songDetails',
       }"
+      v-show="display_path.includes(route.name)"
     >
       <el-menu-item index="/layout/home/recommend">推荐</el-menu-item>
       <el-menu-item index="/layout/home/charts">排行榜</el-menu-item>
@@ -41,10 +42,18 @@ export default defineComponent({
         return "/layout/home/mvs";
       }
     });
+    let display_path = [
+      "recommend",
+      "charts_details",
+      "songSheets",
+      "singers",
+      "mv",
+    ];
     return {
       router,
       route,
       selectRouter_home,
+      display_path,
     };
   },
 });

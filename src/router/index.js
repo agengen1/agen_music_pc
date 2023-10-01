@@ -174,6 +174,14 @@ const routes = [
             },
             component: () => import("@/components/user_level/index.vue"),
           },
+          {
+            path: "albumDetails/:albumId",
+            name: "albumDetails",
+            meta: {
+              title: "专辑详情",
+            },
+            component: () => import("@/components/album_details/index.vue"),
+          },
         ],
       },
       {
