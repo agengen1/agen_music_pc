@@ -17,9 +17,12 @@
               <p class="album_name">{{ album_Data.album.name }}</p>
               <p class="album_artist">
                 歌手：
-                <span v-for="item in album_Data.album.artists" :key="item.id">{{
-                  item.name
-                }}</span>
+                <span
+                  v-for="item in album_Data.album.artists"
+                  :key="item.id"
+                  @click="clickSkipSingerDetails(item.id)"
+                  >{{ item.name }}</span
+                >
               </p>
               <p>发行时间：{{ stamp_time(album_Data.album.publishTime) }}</p>
               <p v-if="album_Data.album.company">
@@ -160,6 +163,14 @@ export default defineComponent({
       router.push(`/layout/home/albumDetails/${id}`);
     }
     /**
+     * 点击跳转歌手详情页面
+     * @param {string |number} singerId
+     */
+    function clickSkipSingerDetails(singerId) {
+      // TODO:
+      router.push(`/layout/home/singerDetails/${singerId}`);
+    }
+    /**
      * 点击添加专辑单曲到歌单
      */
     function clickButton_pushMusic() {
@@ -202,6 +213,7 @@ export default defineComponent({
       clickSkipAlbumDetails,
       clickPlaySongsMusic_all,
       clickButton_pushMusic,
+      clickSkipSingerDetails,
       icon: {
         Share,
         VideoPlay,
