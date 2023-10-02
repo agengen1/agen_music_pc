@@ -90,6 +90,12 @@
                 :albumTotal="singerDetails.artist.albumSize"
               ></allAlbum
             ></van-tab>
+            <van-tab title="MV"
+              ><allMv
+                :singerId="singerDetails.artist.id"
+                :mvTotal="singerDetails.artist.mvSize"
+              ></allMv
+            ></van-tab>
             <van-tab title="艺人简介"
               ><singerDesc
                 :singerId="singerDetails.artist.id"
@@ -142,6 +148,7 @@ import { computeSingerAs } from "@/assets/public";
 import { useStore } from "vuex";
 import { FolderAdd, Check, User } from "@element-plus/icons-vue";
 import allAlbum from "@/components/singer_details/all_album/index.vue";
+import allMv from "@/components/singer_details/all_mvs/index.vue";
 import hotSongs from "@/components/singer_details/hot_songs/index.vue";
 import singerDesc from "@/components/singer_details/singer_desc/index.vue";
 import { CreatedVerifyapi } from "@/api/userDetailsApi";
@@ -153,6 +160,7 @@ export default defineComponent({
   components: {
     goBack,
     allAlbum,
+    allMv,
     hotSongs,
     singerDesc,
   },

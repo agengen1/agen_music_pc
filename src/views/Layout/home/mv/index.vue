@@ -316,13 +316,13 @@ export default defineComponent({
         .mvTime {
           padding: 2px 5px;
           position: absolute;
-          right: 0;
-          top: 64.1%;
+          left: 0;
+          top: 0;
           background-color: #00000061;
           color: #ffffff;
           font-size: 14px;
           border-radius: 5px;
-          border-bottom-right-radius: 10px;
+          border-top-left-radius: 10px;
         }
         .playCount {
           padding: 2px 5px;

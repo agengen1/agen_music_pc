@@ -70,6 +70,18 @@ export const getSingerAlbumapi = (id, limit, offset) => {
 };
 
 /**
+ * 获取歌手mv
+ * @param {String | number}  id 歌手 id
+ * @param { number } limit 取出数量 , 默认为 30
+ * @param { number } offset  偏移数量 , 用于分页 , 如 :( 页数 -1)*30, 其中 30 为 limit 的值 , 默认 为 0
+ */
+export const getSingerMvsapi = (id, limit, offset) => {
+  return axios.get(
+    `/artist/mv?id=${id}&limit=${limit}&offset=${(offset - 1) * limit}`
+  );
+};
+
+/**
  * 获取喜欢的歌手
  * @param {number}  limit: 取出歌单数量 , 默认为 25
  * @param {number}  offset: 偏移数量 , 用于分页 , 如 :( 评论页数 -1)*25, 其中 25 为 limit 的值
