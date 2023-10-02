@@ -10,7 +10,7 @@
       }"
     >
       <div class="logo">
-        <img src="@/assets/logo_png.png" />
+        <img src="@/assets/img/logo_png.png" />
       </div>
       <el-menu-item index="/layout/home">音乐馆</el-menu-item>
       <el-menu-item index="/layout/user">我的音乐</el-menu-item>
