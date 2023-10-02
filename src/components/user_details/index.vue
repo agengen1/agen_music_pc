@@ -46,9 +46,6 @@
                 ><el-icon><Mic /></el-icon>歌手页</el-button
               >
             </p>
-            <p v-else>
-              <el-button :icon="EditPen" type="info">编辑个人资料</el-button>
-            </p>
           </div>
           <div class="info_top_otherinfo">
             <div>

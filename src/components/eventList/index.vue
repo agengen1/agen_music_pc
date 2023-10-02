@@ -196,6 +196,7 @@ export default defineComponent({
   
 <style lang='less' scoped>
 .eventList {
+  padding: 0 20px;
   min-height: 70vh;
   .userinfo {
     padding: 5px;
@@ -220,15 +221,15 @@ export default defineComponent({
     }
   }
   .follwed_title {
-    padding: 10px 10px 0;
+    padding: 10px 100px 0;
     font-size: 14px;
     color: #333;
+    font-weight: 700;
   }
   .eventList_content {
+    padding: 0 100px;
     display: flex;
-    width: 70%;
     flex-direction: column;
-    padding: 0 20px 20px 20px;
 
     .top {
       font-size: 18px;

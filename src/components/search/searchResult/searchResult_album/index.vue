@@ -1,11 +1,28 @@
 <template>
-  <div class="searchResultUser">
+  <div class="searchResultAlbum">
     <Loading
-      v-if="searchResultUser_flag"
+      v-if="searchResultAlbum_flag"
       textColor="#409eff"
       title="加载中..."
     ></Loading>
-    <div class="content" v-else></div>
+    <div class="content" v-else>
+      <el-empty
+        v-if="albumList.length <= 0 && !searchResultAlbum_flag"
+        description="暂无搜索专辑"
+      />
+      <div class="info" v-for="item in albumList" :key="item.id">
+        <img
+          v-lazy="item.picUrl + '?param=300y300'"
+          :alt="item.name"
+          :title="item.name"
+          @click="clickAlbumNameSkip(item.id)"
+        />
+        <p
+          v-html="SearchTextHighlight(key, item.name)"
+          @click="clickAlbumNameSkip(item.id)"
+        ></p>
+      </div>
+    </div>
     <div class="paginatio">
       <el-pagination
         background
@@ -14,7 +31,7 @@
         :default-page-size="pagCount"
         :current-page="pagNo"
         @current-change="handlerCurrentChange($event)"
-        :disabled="searchResultUser_flag"
+        :disabled="searchResultAlbum_flag"
         hide-on-single-page
       />
     </div>
@@ -28,7 +45,7 @@ import { SearchTextHighlight } from "@/assets/public";
 import { useRouter } from "vue-router";
 
 export default defineComponent({
-  name: "searchResultUser",
+  name: "searchResultAlbum",
   props: {
     keyWord: {
       type: String,
@@ -37,7 +54,8 @@ export default defineComponent({
   },
   setup(props) {
     let router = useRouter();
-    let searchResultUser_flag = ref(true); //加载状态
+    let searchResultAlbum_flag = ref(true); //加载状态
+    let albumList = ref([]); //专辑列表
     let total = ref(0); //共有多少条数据
     let pagCount = ref(30); //每一页数据 默认30条
     let pagNo = ref(1); //第几页
@@ -49,25 +67,31 @@ export default defineComponent({
         if (newVal) {
           pagNo.value = 1;
           key.value = newVal;
-          // getSearchResult(
-          //   props.keyWord,
-          //   1002,
-          //   pagCount.value,
-          //   pagNo.value,
-          //   true
-          // );
+          getSearchResult(
+            props.keyWord,
+            10,
+            pagCount.value,
+            pagNo.value,
+            false
+          );
         }
       },
       { immediate: true }
     );
-
+    /**
+     * 点击跳转专辑详情页
+     * @param {string|number} id 专辑id
+     */
+    function clickAlbumNameSkip(id) {
+      router.push(`/layout/home/albumDetails/${id}`);
+    }
     /**
      * 点击分页触发
      */
     function handlerCurrentChange(No) {
       pagNo.value = No;
-      searchResultUser_flag.value = true;
-      getSearchResult(props.keyWord, 1002, pagCount.value, pagNo.value, true);
+      searchResultAlbum_flag.value = true;
+      getSearchResult(props.keyWord, 10, pagCount.value, pagNo.value, true);
     }
 
     /**
@@ -85,26 +109,69 @@ export default defineComponent({
         limit,
         offset
       );
+      searchResultAlbum_flag.value = false;
+      if (res && res.code === 200 && res.result && res.result.albums) {
+        albumList.value = res.result.albums;
+        if (res.result.albumCount) {
+          total.value = res.result.albumCount;
+        }
+        if (flagScroll) {
+          window.scrollTo({
+            top: 300,
+            behavior: "smooth", // 平滑滚动效果
+          });
+        }
+      }
     }
 
     return {
-      searchResultUser_flag,
+      searchResultAlbum_flag,
       key,
       pagCount,
       pagNo,
       total,
       handlerCurrentChange,
       SearchTextHighlight,
+      albumList,
+      clickAlbumNameSkip,
     };
   },
 });
 </script>
 
 <style lang='less' scoped>
-.searchResultUser {
+.searchResultAlbum {
   padding: 20px;
   .content {
     min-height: 40vh;
+    display: flex;
+    flex-wrap: wrap;
+    .info {
+      margin: 10px 1%;
+      width: 14.6%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img {
+        width: 90%;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 0.5px solid #ccc;
+      }
+      p {
+        margin: 5px 0 0 0;
+        width: 90%;
+        font: 500 14px "华文楷书";
+        &:nth-child(2) {
+          cursor: pointer;
+          &:hover {
+            color: #409eff;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
   }
   .paginatio {
     margin-top: 25px;
