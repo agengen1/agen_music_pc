@@ -66,7 +66,41 @@
     </el-menu>
   </div>
   <router-view></router-view>
-  <div class="Layout_Footer" v-if="disappear_footer"></div>
+  <div class="Layout_Footer" v-if="disappear_footer">
+    <div class="content">
+      <div class="top_footer">
+        <p>
+          <a
+            href="https://github.com/Binaryify/NeteaseCloudMusicApi"
+            target="_blank"
+          >
+            <i class="iconfont icon-github"></i>
+          </a>
+          <span>后端技术支持</span>
+        </p>
+        <p>
+          <a href="https://github.com/agengen1" target="_blank">
+            <i class="iconfont icon-github"></i>
+          </a>
+          <span>开发者</span>
+        </p>
+        <p @click="clickCopyContent('2073923271')">
+          <van-icon name="qq" class="van_i" />
+          <span>开发者QQ</span>
+        </p>
+        <p @click="clickCopyContent('2073923271@qq.com')">
+          <van-icon name="envelop-o" class="van_i" />
+          <span>开发者邮箱</span>
+        </p>
+      </div>
+      <div class="bottom_desc">
+        <p>如有侵权，请联系 2073923271@qq.com 进行整改。谢谢！</p>
+        <p>
+          本网站只做学习参考，切勿进行商业活动，一经发现，请立即停止行为(并承担全部法律责任)
+        </p>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -147,6 +181,27 @@ export default defineComponent({
       store.commit("user/SETLOGINOPENSTATE", true);
     }
     /**
+     * 点击复制内容
+     * @param {string} content 复制的内容
+     */
+    function clickCopyContent(content) {
+      ElMessage.closeAll();
+      navigator.clipboard
+        .writeText(content)
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: `复制成功：${content}`,
+          });
+        })
+        .catch((error) => {
+          ElMessage({
+            type: "error",
+            message: "复制出错!",
+          });
+        });
+    }
+    /**
      * 退出登录
      */
     async function logOut() {
@@ -183,6 +238,7 @@ export default defineComponent({
       clickLogout,
       clickUserNameSkip_doc,
       clickUserLevelSkip_doc,
+      clickCopyContent,
     };
   },
 });
@@ -279,8 +335,52 @@ export default defineComponent({
 }
 .Layout_Footer {
   margin-top: 30px;
+  box-sizing: border-box;
+  padding: 0 10%;
   width: 100%;
   height: 25vh;
   background-color: #333;
+  .content {
+    padding: 20px 0;
+    .top_footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      p {
+        margin: 0 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 100%;
+        cursor: pointer;
+        &:hover i {
+          color: #409eff;
+        }
+        &:hover span {
+          color: #409eff;
+        }
+        i {
+          font-size: 34px;
+        }
+        .van_i {
+          margin: 8.5px 0;
+        }
+      }
+    }
+    .bottom_desc {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      p {
+        margin-top: 10px;
+        font-size: 14px;
+      }
+    }
+  }
 }
 </style>

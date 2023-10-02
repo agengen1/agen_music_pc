@@ -85,7 +85,7 @@
             >
               {{ item.treeJson_data.song.name }}
             </span>
-            <span class="singerName">
+            <span class="singerName text_exceed_hide_one">
               {{ computeSingerAs(item.treeJson_data.song.artists) }}
             </span>
           </div>
@@ -270,7 +270,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  setup() {
     let store = useStore();
     let router = useRouter();
 
@@ -552,6 +552,7 @@ export default defineComponent({
         }
         .song_R {
           display: flex;
+          flex: 1;
           flex-direction: column;
           justify-content: space-between;
           span {

@@ -1,6 +1,6 @@
 <template>
   <router-view></router-view>
-  <van-back-top :offset="300" bottom="20vh" right="3%" />
+  <van-back-top :offset="300" bottom="26vh" right="3%" />
   <!-- 播放器组件 -->
   <PLAYCONTROL
     v-if="playMusic_list.length > 0"
