@@ -112,7 +112,10 @@
             />
           </p>
           <p title="下载歌曲">
-            <el-icon><Download /></el-icon>
+            <el-icon
+              @click="clickDownloadButton(music_info.id, music_info.name)"
+              ><Download
+            /></el-icon>
           </p>
           <p title="播放记录">
             <van-icon
@@ -229,7 +232,8 @@ import { useRouter, useRoute } from "vue-router";
 import { ElNotification, ElMessage } from "element-plus";
 import { PackageMessageBox } from "@/assets/public";
 import { setUserLikeStatusapi } from "@/api/userDetailsApi";
-
+import downloadMusic from "@/utils/downloadMusic";
+import { getSongDetailsNoVipDownloadUrl } from "@/api/songDetailsApi";
 export default defineComponent({
   name: "playControl",
   components: {
@@ -490,6 +494,23 @@ export default defineComponent({
       }
     }
     /**
+     * 点击下载歌曲按钮
+     * @param {String} id  歌曲id
+     * @param {String} id  歌曲name
+     */
+    async function clickDownloadButton(id, name) {
+      //两种情况，登录和未登录获取 歌曲api不同   下面用未登录获取
+      const { data: res } = await getSongDetailsNoVipDownloadUrl(id);
+      if (res && res.code === 200) {
+        const obj = {
+          music_name: name,
+          music_url: res.data[0].url,
+          music_type: res.data[0].type,
+        };
+        downloadMusic(obj);
+      }
+    }
+    /**
      * 点击添加单曲到歌单
      * @param {number} id 单曲id
      */
@@ -687,6 +708,7 @@ export default defineComponent({
       clickPlayMusic_delete_all_music,
       click_close_playlisting,
       clickButton_pushMusic,
+      clickDownloadButton,
     };
   },
 });

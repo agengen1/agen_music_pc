@@ -270,7 +270,6 @@
   </div>
 </template>
 <script>
-``;
 import {
   computed,
   defineComponent,
