@@ -397,7 +397,7 @@ export default defineComponent({
           }
           span {
             margin-right: 4px;
-            font: 700 14px "";
+            font: 700 14px "黑体";
             color: #333;
             img {
               width: 18px;

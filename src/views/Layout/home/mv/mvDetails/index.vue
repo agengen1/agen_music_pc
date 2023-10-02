@@ -188,7 +188,7 @@ export default defineComponent({
         .mvName {
           padding-left: 5px;
           margin: 5px 0;
-          font: 700 28px "";
+          font: 700 28px "黑体";
           color: #333;
         }
         .personInfo {
@@ -205,7 +205,7 @@ export default defineComponent({
           span {
             cursor: pointer;
             margin-left: 6px;
-            font: 700 18px "";
+            font: 700 18px "黑体";
             color: #333;
             &:hover {
               color: #409eff;

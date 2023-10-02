@@ -826,12 +826,12 @@ export default defineComponent({
             align-items: center;
             > span {
               width: 200px;
-              font: 500 14px "";
+              font: 500 14px "黑体";
             }
             > p {
               margin-left: 10px;
               flex: 1;
-              font: 500 14px "";
+              font: 500 14px "黑体";
             }
           }
           .marginTB {

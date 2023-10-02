@@ -334,7 +334,7 @@ export default defineComponent({
         }
         span {
           color: #333;
-          font: 700 18px "";
+          font: 700 18px "黑体";
           cursor: pointer;
           &:hover {
             text-decoration: underline;
@@ -357,7 +357,7 @@ export default defineComponent({
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          font: 700 14px "";
+          font: 700 14px "黑体";
           color: #898989;
           cursor: pointer;
           &:hover {
@@ -377,7 +377,7 @@ export default defineComponent({
           &:nth-child(2) {
             cursor: pointer;
             color: #a8abb2;
-            font: 700 12px "";
+            font: 700 12px "黑体";
             &:hover {
               color: #409eff;
               text-decoration: underline;

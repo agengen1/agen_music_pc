@@ -50,7 +50,7 @@ export default defineComponent({
   .count {
     margin-left: 10px;
     color: #858585;
-    font: 700 12px "";
+    font: 700 12px "黑体";
   }
 }
 </style>
