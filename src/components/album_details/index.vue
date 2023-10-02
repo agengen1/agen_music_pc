@@ -41,7 +41,11 @@
                   @click="clickButton_pushMusic()"
                   >收藏</el-button
                 >
-                <el-button type="info" plain :icon="icon.Share"
+                <el-button
+                  type="info"
+                  plain
+                  :icon="icon.Share"
+                  @click="clickCopySharelink()"
                   >分享({{ album_Data.album.info.shareCount }})</el-button
                 >
               </p>
@@ -107,6 +111,8 @@ import { stamp_time } from "@/assets/public";
 import musicList from "@/components/music_list/index.vue";
 import { Share, VideoPlay, FolderAdd } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
+import { ElMessage } from "element-plus";
+
 export default defineComponent({
   name: "albumDetails",
   components: {
@@ -183,6 +189,25 @@ export default defineComponent({
       store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
     }
     /**
+     * 点击分享
+     */
+    function clickCopySharelink() {
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: `分享链接获取成功:${window.location.href}`,
+          });
+        })
+        .catch((error) => {
+          ElMessage({
+            type: "error",
+            message: `分享链接获取失败:${error.message}`,
+          });
+        });
+    }
+    /**
      * 获取专辑内容
      * @param {number | string} id  专辑id
      */
@@ -214,6 +239,7 @@ export default defineComponent({
       clickPlaySongsMusic_all,
       clickButton_pushMusic,
       clickSkipSingerDetails,
+      clickCopySharelink,
       icon: {
         Share,
         VideoPlay,

@@ -14,7 +14,9 @@
       </div>
       <template #dropdown>
         <el-dropdown-menu>
-          <el-button color="#626aef" size="">全部</el-button>
+          <el-button color="#626aef" @click="clickSongSheetLable('全部')"
+            >全部</el-button
+          >
           <div
             class="lable_info"
             v-for="(item, index) in songsheetLable.type"
@@ -101,7 +103,7 @@ export default defineComponent({
     let pagCount = ref(30); //每一页多少条数据(歌单) 默认30
     let pagNo = ref(1); //当前第几页数据
     /**
-     * 点击标签
+     * 点击标签切换内容
      * @param {string} label 标签名称
      */
     function clickSongSheetLable(label) {

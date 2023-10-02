@@ -72,7 +72,9 @@
         <div class="user_info_content_singer">
           <h3>
             <span>喜欢的歌手</span
-            ><span>查看更多<van-icon name="arrow" /></span>
+            ><span @click="clickSkipFollowedList(user_info.profile.userId)"
+              >查看更多<van-icon name="arrow"
+            /></span>
           </h3>
           <div class="singer_content">
             <ul>

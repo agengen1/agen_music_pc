@@ -19,6 +19,10 @@
           <p>{{ item.txt }}</p>
         </div>
       </div>
+      <el-empty
+        v-if="!singerDesc.introduction && !singerDesc.briefDesc"
+        description="歌手暂无简介"
+      />
     </div>
   </div>
 </template>

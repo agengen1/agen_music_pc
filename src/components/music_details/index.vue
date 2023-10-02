@@ -49,7 +49,11 @@
             @click="setSongSheetFollower(SongSheet_details.id, 1)"
             >收藏({{ SongSheet_details.subscribedCount }})</el-button
           >
-          <el-button type="info" plain :icon="icon.Share"
+          <el-button
+            type="info"
+            plain
+            :icon="icon.Share"
+            @click="clickCopySharelink()"
             >分享({{ SongSheet_details.shareCount }})</el-button
           >
         </div>
@@ -171,7 +175,25 @@ export default defineComponent({
       el_desc_content.style.height = desc_height.value + "px";
       el_button_text.value = "展开";
     }
-
+    /**
+     * 点击分享
+     */
+    function clickCopySharelink() {
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: `分享链接获取成功:${window.location.href}`,
+          });
+        })
+        .catch((error) => {
+          ElMessage({
+            type: "error",
+            message: `分享链接获取失败:${error.message}`,
+          });
+        });
+    }
     /**
      * 点击跳转用户详情页面
      * @param {string | number} id 用户id
@@ -265,6 +287,7 @@ export default defineComponent({
       clickPlaySongsMusic_all,
       userId,
       setSongSheetFollower,
+      clickCopySharelink,
       desc_height_str: desc_height.value + "px",
       icon: {
         Share,

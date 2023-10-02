@@ -79,7 +79,7 @@
             @click="clickButton_pushMusic(song_info.id)"
             ><el-icon :size="20"><FolderAdd /></el-icon>&nbsp; 收藏</el-button
           >
-          <el-button type="info" plain round
+          <el-button type="info" plain round @click="clickCopySharelink()"
             ><el-icon :size="20"><Share /></el-icon>&nbsp; 分享</el-button
           >
 
@@ -285,7 +285,6 @@ import {
   getSongDetailsHotCommentapi,
   getSongDetailsCommentapi,
   getSongDetailsLyricapi,
-  getSongDetailsHaveVipDownloadUrl,
   getSongDetailsNoVipDownloadUrl,
 } from "@/api/songDetailsApi";
 import {
@@ -440,6 +439,25 @@ export default defineComponent({
     function clickButton_pushMusic(id) {
       store.commit("collect/SETCOLLECTMUSIC_ID", id);
       store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
+    }
+    /**
+     * 点击分享
+     */
+    function clickCopySharelink() {
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => {
+          ElMessage({
+            type: "success",
+            message: `分享链接获取成功:${window.location.href}`,
+          });
+        })
+        .catch((error) => {
+          ElMessage({
+            type: "error",
+            message: `分享链接获取失败:${error.message}`,
+          });
+        });
     }
     /**
      * 点击复制歌词
@@ -717,6 +735,7 @@ export default defineComponent({
       Download,
       CopyDocument,
       clickButton_pushMusic,
+      clickCopySharelink,
     };
   },
 });
