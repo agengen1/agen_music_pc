@@ -22,7 +22,10 @@
               {{ computeSingerAs(singerDetails.artist.alias) }}
             </p>
             <p class="info_identify" v-if="singerDetails.identify != null">
-              <img v-lazy="singerDetails.identify.imageUrl" />
+              <img
+                v-if="singerDetails.identify.imageUrl"
+                v-lazy="singerDetails.identify.imageUrl"
+              />
               <span>{{ singerDetails.identify.imageDesc }}</span>
             </p>
             <p class="info_identities">

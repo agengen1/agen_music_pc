@@ -67,7 +67,7 @@
                 @click="clickPlayIcon_playMusic(item)"
             /></span>
           </p>
-          <p class="text_exceed_hide_one">
+          <p class="singers_all text_exceed_hide_one">
             <span
               v-for="item_a in item.ar"
               :key="item_a.id"
@@ -76,7 +76,7 @@
                 Highlight: item_a.name == key,
               }"
             >
-              &nbsp; {{ item_a.name }}&nbsp;
+              {{ item_a.name }}
             </span>
           </p>
           <p>{{ computeMusicTimeDuration(item.dt) }}</p>
@@ -384,6 +384,11 @@ export default defineComponent({
             padding-right: 50px;
             text-align: right;
             width: 10%;
+          }
+        }
+        .singers_all {
+          span {
+            margin: 0 5px;
           }
         }
       }
