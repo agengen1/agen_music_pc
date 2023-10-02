@@ -348,8 +348,7 @@ export default defineComponent({
       if (e.target.tagName === "SPAN") {
         ElMessage.closeAll();
         if (parseInt(e.target.dataset.actid) > 0) {
-          console.log(e.target.innerText);
-          console.log("跳转", e.target.dataset.actid);
+          router.push(`/layout/home/subject/${e.target.dataset.actid}`);
         } else {
           ElMessage({
             type: "error",
