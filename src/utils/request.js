@@ -3,7 +3,7 @@ import { ElMessage } from "element-plus";
 
 //携带Cookies 请求
 const xaxios = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: process.env.VUE_APP_SEVER_URL,
   withCredentials: true,
 });
 
