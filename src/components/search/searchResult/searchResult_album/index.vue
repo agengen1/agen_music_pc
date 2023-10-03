@@ -142,6 +142,9 @@ export default defineComponent({
 <style lang='less' scoped>
 .searchResultAlbum {
   padding: 20px;
+  /deep/ .el-empty {
+    width: 100%;
+  }
   .content {
     min-height: 40vh;
     display: flex;
