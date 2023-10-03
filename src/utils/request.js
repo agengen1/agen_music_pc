@@ -51,8 +51,21 @@ xaxios.interceptors.response.use(
         message: "未找到此资源！",
       });
       return Promise.resolve(error);
+    } else if (error.response.status === 405) {
+      ElMessage({
+        type: "error",
+        grouping: true,
+        message: "请求过于频繁",
+      });
+      return Promise.resolve(error);
+    } else {
+      ElMessage({
+        type: "error",
+        grouping: true,
+        message: "网络错误！",
+      });
+      return Promise.resolve(error);
     }
-    return Promise.reject(error);
   }
 );
 
