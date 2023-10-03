@@ -294,6 +294,9 @@ export default defineComponent({
     let user_login_id = computed(() => {
       return store.state.user.userinfo.userId;
     }); //登录者id
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
     let isPower = ref(true); //是否有访问权限; true-有
     let user_r_played = ref([]); //听歌排行数据
     let r_played_flag = ref(true); //听歌排行数据请求状态
@@ -408,6 +411,13 @@ export default defineComponent({
      * 点击按钮关注
      */
     function clickFollow_button(id) {
+      ElMessage.closeAll();
+      if (!user_isLogin.value) {
+        return ElMessage({
+          type: "warning",
+          message: "请先进行登录",
+        });
+      }
       setFollower(id, 1);
     }
     /**

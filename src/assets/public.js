@@ -218,6 +218,19 @@ export function PackageMessageBox(message = "", title = "", options = {}) {
   return ElMessageBox.confirm(message, title, options);
 }
 
+/**
+ * 复制功能
+ * @param {string} message 复制的内容
+ */
+export function copyToClipboard(message) {
+  const textarea = document.createElement("textarea");
+  textarea.innerText = message;
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
 window.stamp_time = stamp_time;
 window.getProvince = getProvince;
 window.getCity = getCity;
@@ -226,3 +239,4 @@ window.playCountTransform = playCountTransform;
 window.SearchTextHighlight = SearchTextHighlight;
 window.FollowWordHighlight = FollowWordHighlight;
 window.FollowA_userNameHighlight = FollowA_userNameHighlight;
+window.copyToClipboard = copyToClipboard;

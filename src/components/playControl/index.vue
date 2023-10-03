@@ -252,6 +252,9 @@ export default defineComponent({
     let store = useStore(); //vuex 中的公共数据
     let router = useRouter();
     let route = useRoute();
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
     let isLikeMusic = computed(() => {
       if (store.state.user.user_isLogin) {
         if (
@@ -515,6 +518,13 @@ export default defineComponent({
      * @param {number} id 单曲id
      */
     function clickButton_pushMusic(id) {
+      ElMessage.closeAll();
+      if (!user_isLogin.value) {
+        return ElMessage({
+          type: "warning",
+          message: "请先进行登录",
+        });
+      }
       store.commit("collect/SETCOLLECTMUSIC_ID", id);
       store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
     }

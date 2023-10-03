@@ -337,6 +337,9 @@ export default defineComponent({
     let loading_flag = ref(false); //按钮加载状态
     let rgbaColor1 = ref(""); //随机16进制颜色1
     let rgbaColor2 = ref(""); //随机16进制颜色2
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
     let all_pages = computed(() => {
       if (CountTotal.value > 0 && pageCount.value > 0) {
         return Math.ceil(CountTotal.value / pageCount.value);
@@ -436,6 +439,13 @@ export default defineComponent({
      * @param {number} id 单曲id
      */
     function clickButton_pushMusic(id) {
+      ElMessage.closeAll();
+      if (!user_isLogin.value) {
+        return ElMessage({
+          type: "warning",
+          message: "请先进行登录",
+        });
+      }
       store.commit("collect/SETCOLLECTMUSIC_ID", id);
       store.commit("collect/SETCOLLECTMUSIC_STATUS", true);
     }
@@ -443,20 +453,12 @@ export default defineComponent({
      * 点击分享
      */
     function clickCopySharelink() {
-      navigator.clipboard
-        .writeText(window.location.href)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: `分享链接获取成功:${window.location.href}`,
-          });
-        })
-        .catch((error) => {
-          ElMessage({
-            type: "error",
-            message: `分享链接获取失败:${error.message}`,
-          });
-        });
+      ElMessage.closeAll();
+      copyToClipboard(window.location.href);
+      ElMessage({
+        type: "success",
+        message: `分享链接复制成功：${window.location.href}`,
+      });
     }
     /**
      * 点击复制歌词
@@ -474,20 +476,12 @@ export default defineComponent({
         str += el.words + "\n";
       });
       str = song_name + "\n" + "\n" + str;
-      navigator.clipboard
-        .writeText(str)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: "歌词已成功复制到剪贴板",
-          });
-        })
-        .catch((error) => {
-          ElMessage({
-            type: "error",
-            message: `复制歌词到剪贴板时出错:${error.message}`,
-          });
-        });
+      ElMessage.closeAll();
+      copyToClipboard(str);
+      ElMessage({
+        type: "success",
+        message: "复制歌词成功!",
+      });
     }
     /**
      * clickPlayButton_playMusic

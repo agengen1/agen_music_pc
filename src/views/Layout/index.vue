@@ -109,7 +109,7 @@ import { useRouter, useRoute } from "vue-router";
 import { SwitchButton, TrophyBase, Connection } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 import { logOutapi } from "@/api/loginApi";
-import { PackageMessageBox } from "@/assets/public";
+import { PackageMessageBox, copyToClipboard } from "@/assets/public";
 import { ElMessage } from "element-plus";
 import search from "@/components/search/index.vue";
 
@@ -186,20 +186,11 @@ export default defineComponent({
      */
     function clickCopyContent(content) {
       ElMessage.closeAll();
-      navigator.clipboard
-        .writeText(content)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: `复制成功：${content}`,
-          });
-        })
-        .catch((error) => {
-          ElMessage({
-            type: "error",
-            message: "复制出错!",
-          });
-        });
+      copyToClipboard(content);
+      ElMessage({
+        type: "success",
+        message: `复制成功：${content}`,
+      });
     }
     /**
      * 退出登录

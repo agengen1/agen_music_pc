@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
 import { getAlbumData_api, getNewAlbum_api } from "@/api/albumApi";
 import { useRoute, useRouter } from "vue-router";
 import { stamp_time } from "@/assets/public";
@@ -126,6 +126,9 @@ export default defineComponent({
     let album_Data = ref({}); //专辑数据
     let newAlbum_flag = ref(true); //最新专辑加载状态
     let newAlbum_Data = ref([]); //最新专辑数据
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
     watch(
       () => route.params.albumId,
       (newVal) => {
@@ -180,6 +183,13 @@ export default defineComponent({
      * 点击添加专辑单曲到歌单
      */
     function clickButton_pushMusic() {
+      ElMessage.closeAll();
+      if (!user_isLogin.value) {
+        return ElMessage({
+          type: "warning",
+          message: "请先进行登录",
+        });
+      }
       let arr_ids = [];
       album_Data.value.songs.forEach((el) => {
         arr_ids.push(el.id);
@@ -192,20 +202,12 @@ export default defineComponent({
      * 点击分享
      */
     function clickCopySharelink() {
-      navigator.clipboard
-        .writeText(window.location.href)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: `分享链接获取成功:${window.location.href}`,
-          });
-        })
-        .catch((error) => {
-          ElMessage({
-            type: "error",
-            message: `分享链接获取失败:${error.message}`,
-          });
-        });
+      ElMessage.closeAll();
+      copyToClipboard(window.location.href);
+      ElMessage({
+        type: "success",
+        message: `分享链接复制成功：${window.location.href}`,
+      });
     }
     /**
      * 获取专辑内容

@@ -92,7 +92,7 @@
 </template>
       
 <script>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import musicList from "@/components/music_list/index.vue";
 import {
@@ -107,7 +107,7 @@ import {
   Check,
   FolderAdd,
 } from "@element-plus/icons-vue";
-import { stamp_time } from "@/assets/public";
+import { stamp_time, copyToClipboard } from "@/assets/public";
 import { ElMessage } from "element-plus";
 import { useStore } from "vuex";
 export default defineComponent({
@@ -120,6 +120,9 @@ export default defineComponent({
     let router = useRouter();
     let store = useStore();
     let userId = parseInt(localStorage.getItem("userId")); //登录用户id
+    let user_isLogin = computed(() => {
+      return store.state.user.user_isLogin;
+    });
     let SongSheet_details = ref({});
     let data_loading = ref(true);
     let desc_height = ref(50); //desc允许展示高度
@@ -179,20 +182,12 @@ export default defineComponent({
      * 点击分享
      */
     function clickCopySharelink() {
-      navigator.clipboard
-        .writeText(window.location.href)
-        .then(() => {
-          ElMessage({
-            type: "success",
-            message: `分享链接获取成功:${window.location.href}`,
-          });
-        })
-        .catch((error) => {
-          ElMessage({
-            type: "error",
-            message: `分享链接获取失败:${error.message}`,
-          });
-        });
+      ElMessage.closeAll();
+      copyToClipboard(window.location.href);
+      ElMessage({
+        type: "success",
+        message: `分享链接复制成功：${window.location.href}`,
+      });
     }
     /**
      * 点击跳转用户详情页面
@@ -207,6 +202,13 @@ export default defineComponent({
      * @param {string | number} t : 1为收藏,2为取消收藏
      */
     async function setSongSheetFollower(id, t) {
+      ElMessage.closeAll();
+      if (!user_isLogin.value) {
+        return ElMessage({
+          type: "warning",
+          message: "请先进行登录",
+        });
+      }
       const { data: res } = await setSongSheetFollowerapi(id, t);
       if (res && res.code === 200) {
         ElMessage({
