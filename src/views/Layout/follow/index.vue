@@ -8,7 +8,7 @@
         title="加载中..."
       ></Loading>
       <events v-else :followList="followList" :pageNO="pageNO"></events>
-      <div class="paginatio">
+      <div class="paginatio" v-if="pageNO > 1">
         <el-button
           type="primary"
           :icon="ArrowLeftBold"
@@ -76,7 +76,11 @@
               >查看更多<van-icon name="arrow"
             /></span>
           </h3>
-          <div class="singer_content">
+          <el-empty
+            v-if="likeSinger_data.length <= 0"
+            description="暂无喜欢歌手"
+          />
+          <div class="singer_content" v-else>
             <ul>
               <li v-for="item in likeSinger_data" :key="item.id">
                 <div class="singer_content_left">

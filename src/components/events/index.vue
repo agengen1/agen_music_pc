@@ -1,5 +1,6 @@
 <template>
-  <div class="events">
+  <el-empty v-if="JSON.stringify(followList) == '{}'" description="暂无动态" />
+  <div class="events" v-else>
     <div class="info" v-for="item in followList[pageNO].event" :key="item.id">
       <div class="left">
         <img

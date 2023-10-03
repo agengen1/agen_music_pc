@@ -83,7 +83,10 @@
         </li>
       </ul>
       <el-empty v-else description="歌单暂无音乐">
-        <el-button v-if="route.name == 'musicSongSheet'" type="primary"
+        <el-button
+          v-if="route.name == 'musicSongSheet'"
+          type="primary"
+          @click="clickSkipRecommend()"
           >前往音乐馆收藏音乐</el-button
         >
       </el-empty>
@@ -189,6 +192,12 @@ export default defineComponent({
       router.push("/layout/home/songDetails/" + id);
     }
     /**
+     *  点击跳转音乐馆添加音乐
+     */
+    function clickSkipRecommend() {
+      router.push("/");
+    }
+    /**
      * clickPlayIcon_playMusic
      * @param {object} music_data
      * 功能：点击播放icon,播放音乐——添加到音乐播放列表
@@ -252,6 +261,7 @@ export default defineComponent({
       key,
       VideoPlay,
       route,
+      clickSkipRecommend,
       clickPlaySongsMusic_all,
     };
   },
