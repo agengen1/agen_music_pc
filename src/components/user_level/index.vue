@@ -38,7 +38,10 @@
       </div>
       <div class="levelQuity">
         <p class="levelQuity_title">当前等级特权：</p>
-        <ul class="levelQuity_content">
+        <p v-if="levelData.info_arr <= 0" class="noQuity">
+          <span> 暂无特权 </span>
+        </p>
+        <ul class="levelQuity_content" v-else>
           <li v-for="(item, index) in levelData.info_arr" :key="index">
             <span>{{ item }}</span>
           </li>
@@ -111,6 +114,9 @@ export default defineComponent({
           } else {
             levelbarCursor.value = `calc(${newVal.level * 10}% - ${15}px)`;
           }
+        }
+        if (newVal.level === 0) {
+          levelbarCursor.value = "-15px";
         }
         if (
           newVal.nowPlayCount &&
@@ -254,6 +260,18 @@ export default defineComponent({
         font-size: 24px;
         color: #333;
         margin: 25px 0 0;
+      }
+      .noQuity {
+        padding: 10px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        span {
+          padding: 2px 10px;
+          border: 1px solid red;
+          color: red;
+          border-radius: 10px;
+        }
       }
       .levelQuity_content {
         padding-left: 20px;
