@@ -24,7 +24,12 @@
       </div>
       <div class="subject_event">
         <h3>热门动态</h3>
-        <events :followList="subject_listing_obj" :pageNO="1"></events>
+
+        <el-empty
+          v-if="subject_listing_obj[1].event.length <= 0"
+          description="暂无热门动态"
+        />
+        <events v-else :followList="subject_listing_obj" :pageNO="1"></events>
       </div>
     </div>
   </div>
