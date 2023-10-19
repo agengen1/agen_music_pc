@@ -267,7 +267,7 @@ export default defineComponent({
     }
     .other_fun {
       display: flex;
-      margin-left: 20%;
+      margin-left: 30%;
       width: 30%;
       height: 100%;
       p {
