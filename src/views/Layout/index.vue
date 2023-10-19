@@ -4,6 +4,7 @@
       :default-active="slectRouter_layout"
       class="el-menu"
       mode="horizontal"
+      :ellipsis="false"
       router
       :class="{
         isBackColorTransparent: route.name === 'songDetails',
@@ -53,15 +54,15 @@
           </el-dropdown>
         </p>
         <p class="login_user" v-else @click="clickOpenLogin">登录</p>
-      </div>
-      <!-- github头像模块 -->
-      <div class="github_icon">
-        <a href="https://github.com/agengen1/agen_music_pc" target="_blank">
-          <i
-            title="github -- agengen1/agen_music_pc"
-            class="iconfont icon-github"
-          ></i>
-        </a>
+        <!-- github头像模块 -->
+        <div class="github_icon">
+          <a href="https://github.com/agengen1/agen_music_pc" target="_blank">
+            <i
+              title="github -- agengen1/agen_music_pc"
+              class="iconfont icon-github"
+            ></i>
+          </a>
+        </div>
       </div>
     </el-menu>
   </div>
@@ -267,24 +268,23 @@ export default defineComponent({
     }
     .other_fun {
       display: flex;
-      margin-left: 30%;
-      width: 30%;
+      flex: 1;
       height: 100%;
+      justify-content: flex-end;
       p {
         display: flex;
         justify-content: center;
         align-items: center;
       }
       .sea_header {
-        width: 75%;
+        width: 35%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
       }
       .login_user {
-        margin-left: 20px;
-        flex: 1;
+        margin: 0 20px 0 35px;
         font-size: 16px;
         font-weight: 700;
         cursor: pointer;
@@ -293,31 +293,32 @@ export default defineComponent({
         }
       }
       .loginSuccess {
-        flex: 1;
-        margin-left: 20px;
+        margin: 0 20px;
         .infoimg {
           width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
           img {
-            width: 50%;
+            width: 37px;
             object-fit: cover;
             border-radius: 50%;
           }
         }
       }
-    }
-    .github_icon {
-      width: 6%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      i {
-        cursor: pointer;
-        color: #333;
-        font-size: 36px;
+
+      .github_icon {
+        margin-right: 20px;
+        width: 6%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        i {
+          cursor: pointer;
+          color: #333;
+          font-size: 36px;
+        }
       }
     }
   }
