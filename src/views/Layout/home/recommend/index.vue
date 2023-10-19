@@ -397,7 +397,6 @@ export default defineComponent({
      */
     async function getRankingList() {
       let { data: res } = await getRankingListapi();
-      console.log(res);
       if (res && res.code === 200) {
         res.list.forEach((item, index) => {
           if (index < 3) {
@@ -500,7 +499,7 @@ export default defineComponent({
             justify-content: space-around;
             background-color: #f6f6f6;
             .one_songsheet {
-              width: 160px;
+              width: 22%;
               height: 200px;
               margin: 10px 5px;
               cursor: pointer;

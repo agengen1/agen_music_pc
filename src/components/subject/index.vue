@@ -108,8 +108,6 @@ export default defineComponent({
         subject_listing_obj[1] = {
           event: res.events,
         };
-
-        console.log(subject_listing_obj[1].event);
       }
     }
     return {

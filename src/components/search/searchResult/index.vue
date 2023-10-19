@@ -82,7 +82,6 @@ export default defineComponent({
       window.addEventListener("scroll", onscrollDom);
     });
     onUnmounted(() => {
-      console.log("卸载了scroll事件");
       window.removeEventListener("scroll", onscrollDom);
     }),
       watch(

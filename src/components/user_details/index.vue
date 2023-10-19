@@ -389,7 +389,6 @@ export default defineComponent({
      * 功能::点击跳转音乐详情页面
      */
     function clickMuiscName_Skpi_doc(id) {
-      console.log(id);
       // DOTO:
       router.push("/layout/home/songDetails/" + id);
     }

@@ -257,11 +257,12 @@ export default defineComponent({
       font-weight: 700;
     }
     .logo {
-      width: 18%;
+      margin: 0 15px 0 20px;
       img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transform: scale(1.1);
       }
     }
     .other_fun {

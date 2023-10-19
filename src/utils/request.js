@@ -15,7 +15,6 @@ xaxios.interceptors.request.use(
   },
   function (error) {
     console.log("NetworkError");
-
     // 对请求错误做些什么
     throw error;
   }

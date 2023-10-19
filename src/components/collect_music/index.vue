@@ -56,9 +56,7 @@ export default defineComponent({
      * @param {string | number} tracks: 歌曲 id,可多个,用逗号隔开
      */
     async function push_delSongSheetMusic(op, pid, tracks) {
-      console.log(tracks);
       const { data: res } = await push_delSongSheetMusicapi(op, pid, tracks);
-      console.log(res);
       if (res && res.body.code === 200) {
         ElMessage({
           type: "success",

@@ -343,7 +343,6 @@ export default defineComponent({
               }
             }
           }
-          console.log(delete_nextid, defaultSelete.value);
           defaultSelete.value = "1-" + delete_nextid;
           router.push(`/layout/user/userMusicSongSheet/${delete_nextid}`);
         }
@@ -385,7 +384,6 @@ export default defineComponent({
               }
             }
           }
-          console.log(delete_nextid, defaultSelete.value);
           defaultSelete.value = "2-" + delete_nextid;
           router.push(`/layout/user/userMusicSongSheet/${delete_nextid}`);
         }

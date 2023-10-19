@@ -205,7 +205,6 @@ export default defineComponent({
     async function getSearchSuggestions(key) {
       const { data: res } = await getSearchSuggestionsapi(key);
       search_flag.value = false;
-      console.log(res);
       if (res && res.code === 200) {
         searchSuggestions_data.value = res.result;
       }
