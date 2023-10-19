@@ -690,7 +690,7 @@ export default defineComponent({
                 text-align: center;
                 &:nth-child(1) {
                   margin: 10px 0;
-                  font: 700 24px "黑体";
+                  font: 700 24px "Helvetica Neue";
                 }
               }
             }

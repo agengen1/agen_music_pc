@@ -713,7 +713,7 @@ export default defineComponent({
             display: flex;
             justify-content: center;
             align-items: center;
-            font: 700 16px "黑体";
+            font: 700 16px "Helvetica Neue";
           }
           .played_info {
             width: 60%;
@@ -724,7 +724,7 @@ export default defineComponent({
               align-items: center;
               .played_info_left_name {
                 margin-right: 4px;
-                font: 700 14px "黑体";
+                font: 700 14px "Helvetica Neue";
                 color: #000;
                 cursor: pointer;
                 &:hover {

@@ -836,12 +836,12 @@ export default defineComponent({
             align-items: center;
             > span {
               width: 200px;
-              font: 500 14px "黑体";
+              font: 500 14px "Helvetica Neue";
             }
             > p {
               margin-left: 10px;
               flex: 1;
-              font: 500 14px "黑体";
+              font: 500 14px "Helvetica Neue";
             }
           }
           .marginTB {

@@ -573,10 +573,10 @@ export default defineComponent({
           line-height: 20px;
 
           &:nth-child(1) {
-            font: 500 14px "黑体";
+            font: 500 14px "Helvetica Neue";
           }
           &:nth-child(2) {
-            font: 500 12px "黑体";
+            font: 500 12px "Helvetica Neue";
             color: #8d8d8d;
           }
         }
@@ -612,10 +612,10 @@ export default defineComponent({
   }
   .SongSheetInfoControl {
     .header_create {
-      font: 700 18px "黑体";
+      font: 700 18px "Helvetica Neue";
     }
     .header_edit {
-      font: 500 16px "黑体";
+      font: 500 16px "Helvetica Neue";
       color: #656565;
       span {
         &:nth-child(1) {

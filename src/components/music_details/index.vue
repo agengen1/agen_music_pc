@@ -351,7 +351,7 @@ export default defineComponent({
       }
       .SongSheet_desc {
         margin: 10px 0 10px 5px;
-        font: 500 14px "黑体";
+        font: 500 14px "Helvetica Neue";
         color: #8f8f8f;
 
         .h_desc {
@@ -388,7 +388,7 @@ export default defineComponent({
           border-radius: 50%;
         }
         span {
-          font: 700 14px "黑体";
+          font: 700 14px "Helvetica Neue";
           color: #bfbfbf;
         }
         .person {

@@ -353,7 +353,7 @@ export default defineComponent({
               &:nth-child(3) {
                 padding: 0 15px 0 0;
                 width: 65%;
-                font: 700 18px "黑体";
+                font: 700 18px "Helvetica Neue";
                 color: #000;
                 cursor: pointer;
                 &:hover {
