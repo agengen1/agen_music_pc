@@ -314,7 +314,7 @@ export default defineComponent({
 
               span {
                 margin-left: 10px;
-                font: 700 16px "黑体";
+                font: 700 16px "Helvetica Neue";
                 color: #000;
                 cursor: pointer;
                 i {

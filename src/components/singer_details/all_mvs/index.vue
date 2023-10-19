@@ -132,6 +132,7 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       align-items: center;
+      align-self: baseline;
 
       img {
         width: 100%;
